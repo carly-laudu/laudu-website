@@ -1,0 +1,256 @@
+/* =============================================================
+   LAUDU — Colors & Type
+   Brands built with intent. Designed to be recognised.
+   ============================================================= */
+
+/* IvyPresto Display — elegant Didone-style serif for italic accents */
+@import url("https://use.typekit.net/rus3txl.css");
+
+@font-face {
+  font-family: "Dominique";
+  src: url("./fonts/Dominique-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Neue Haas Display";
+  src: url("./fonts/NeueHaasDisplayLight.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Substitutions for weights we don't have font files for.
+   FLAG: replace with proper Neue Haas Display weights when available. */
+@font-face {
+  font-family: "Neue Haas Display";
+  src: url("./fonts/NeueHaasDisplayLight.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- Brand colors ---------- */
+  --laudu-red:        #E2231A;   /* signature accent — the U */
+  --laudu-red-deep:   #B81810;   /* press / deep accent */
+  --laudu-orange:     #F26B1F;   /* warm secondary, blur imagery */
+  --laudu-blue:       #A6BFEC;   /* calm tertiary, soft canvas */
+  --laudu-black:      #0A0A0A;   /* near-black, never pure */
+  --laudu-white:      #FFFFFF;
+  --laudu-bone:       #F4F4F3;   /* neutral off-white, no warmth */
+  --laudu-stone:      #E6E6E5;   /* deeper neutral */
+
+  /* ---------- Neutrals (editorial greys) ---------- */
+  --ink-100: #0A0A0A;
+  --ink-90:  #1A1A1A;
+  --ink-70:  #3D3D3D;
+  --ink-50:  #6B6B6B;
+  --ink-30:  #A3A3A3;
+  --ink-15:  #D6D6D5;
+  --ink-08:  #ECECEB;
+  --ink-04:  #F4F4F3;
+
+  /* ---------- Semantic — light surface (default) ---------- */
+  --bg:        var(--laudu-white);
+  --bg-alt:    var(--laudu-bone);
+  --bg-deep:   var(--laudu-black);
+
+  --fg:        var(--ink-100);    /* primary text */
+  --fg-muted:  var(--ink-70);     /* body secondary */
+  --fg-subtle: var(--ink-50);     /* meta, captions */
+  --fg-faint:  var(--ink-30);     /* placeholders, hairlines */
+
+  --rule:      var(--ink-15);     /* hairline borders */
+  --rule-strong: var(--ink-100);
+
+  --accent:    var(--laudu-red);
+  --accent-press: var(--laudu-red-deep);
+
+  /* ---------- Type families ---------- */
+  --font-display: "Dominique", "Druk Wide", "Compacta", "Impact", "Helvetica Neue", sans-serif;
+  --font-sans:    "Neue Haas Display", "Neue Haas Grotesk Display Pro", "Helvetica Neue", "Inter", system-ui, sans-serif;
+  --font-serif:   "ivypresto-display", "GT Sectra", "Tiempos Headline", "Times New Roman", serif; /* IvyPresto — italic accents only */
+  --font-mono:    "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+
+  /* ---------- Type scale ---------- */
+  /* Display — Dominique Black, uppercase, tight */
+  --fs-display-xl: clamp(72px, 12vw, 220px);
+  --fs-display-lg: clamp(56px, 8vw, 144px);
+  --fs-display-md: clamp(40px, 6vw, 96px);
+  --fs-display-sm: clamp(32px, 4.5vw, 64px);
+
+  /* Body — Neue Haas Light */
+  --fs-lead:   22px;
+  --fs-body:   17px;
+  --fs-small:  14px;
+  --fs-micro:  12px;
+  --fs-eyebrow: 11px;
+
+  /* Line heights */
+  --lh-display: 0.92;
+  --lh-tight:   1.05;
+  --lh-body:    1.55;
+  --lh-loose:   1.7;
+
+  /* Tracking */
+  --tr-display: -0.035em;
+  --tr-eyebrow: 0.16em;
+  --tr-caps:    0.04em;
+
+  /* ---------- Spacing ---------- */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+  --s-10: 144px;
+  --s-11: 192px;
+
+  /* ---------- Radius ---------- */
+  /* LAUDU is editorial: radii are small or zero. */
+  --r-0: 0px;
+  --r-1: 2px;
+  --r-2: 4px;
+  --r-pill: 999px;
+
+  /* ---------- Shadows ---------- */
+  /* Subtle, paper-like. Not glossy. */
+  --sh-1: 0 1px 0 rgba(10,10,10,0.06);
+  --sh-2: 0 8px 24px -12px rgba(10,10,10,0.18);
+  --sh-3: 0 24px 48px -20px rgba(10,10,10,0.22);
+
+  /* ---------- Motion ---------- */
+  --ease-out:    cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0.0, 0.35, 1);
+  --dur-fast:   140ms;
+  --dur-base:   240ms;
+  --dur-slow:   480ms;
+
+  /* ---------- Layout ---------- */
+  --max-w: 1440px;
+  --gutter: 32px;
+}
+
+/* ---------- Dark surface ---------- */
+.laudu-dark, [data-theme="dark"] {
+  --bg:        var(--laudu-black);
+  --bg-alt:    #161514;
+  --bg-deep:   #000000;
+  --fg:        var(--laudu-white);
+  --fg-muted:  #C9C7C2;
+  --fg-subtle: #8A8884;
+  --fg-faint:  #4D4B47;
+  --rule:      #2A2825;
+  --rule-strong: var(--laudu-white);
+}
+
+/* =============================================================
+   Semantic element styles
+   ============================================================= */
+
+.laudu, .laudu * {
+  box-sizing: border-box;
+}
+
+.laudu {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display headings — Dominique, uppercase */
+.laudu h1, .laudu .h1,
+.laudu h2, .laudu .h2,
+.laudu h3, .laudu .h3,
+.laudu .display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: var(--lh-display);
+  letter-spacing: var(--tr-display);
+  margin: 0;
+  color: var(--fg);
+}
+
+.laudu h1, .laudu .h1 { font-size: var(--fs-display-lg); }
+.laudu h2, .laudu .h2 { font-size: var(--fs-display-md); }
+.laudu h3, .laudu .h3 { font-size: var(--fs-display-sm); }
+
+.laudu .display-xl { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; line-height: var(--lh-display); letter-spacing: var(--tr-display); font-size: var(--fs-display-xl); }
+
+/* Body */
+.laudu p, .laudu .body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg);
+  margin: 0;
+}
+
+.laudu .lead {
+  font-size: var(--fs-lead);
+  line-height: 1.4;
+  font-weight: 300;
+}
+
+/* Eyebrow / labels — small caps tracked out */
+.laudu .eyebrow,
+.laudu .label {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+.laudu .meta {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  color: var(--fg-subtle);
+  font-weight: 300;
+}
+
+.laudu .caption {
+  font-family: var(--font-sans);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tr-caps);
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+/* Accent — IvyPresto Semi Bold Italic. The italic red serif treatment, used sparingly. */
+.laudu .accent-serif {
+  font-family: var(--font-serif);
+  
+  color: var(--laudu-red);
+  font-weight: 600;
+}
+
+.laudu a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.laudu a:hover { color: var(--laudu-red); border-bottom-color: var(--laudu-red); }
+
+/* Hairline rule */
+.laudu hr, .laudu .rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: var(--s-7) 0;
+}

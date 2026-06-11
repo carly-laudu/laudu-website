@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LAUDU · Building magnetic brands, experiences & communities.</title>
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<style>
+  /* =============================================================
+     LAUDU Homepage — clean, white, boutique London
+     ============================================================= */
+  html, body { margin: 0; padding: 0; background: #fff; color: var(--fg); }
+  body { overflow-x: hidden; }
+  .laudu { min-height: 100vh; background: #fff; }
+  .laudu ::selection { background: var(--laudu-red); color: #fff; }
+
+  /* Reset design-system anchor borders on UI/nav */
+  .laudu .l-header a,
+  .laudu .l-header__brand,
+  .laudu .l-header__navlink,
+  .laudu .l-header__cta,
+  .laudu .l-work__row,
+  .laudu .l-footer__col a,
+  .laudu .l-footer a,
+  .laudu .l-link {
+    border-bottom: 0;
+  }
+
+  /* ---------- Ampersand — the only IvyPresto moment ---------- */
+  .amp {
+    font-family: var(--font-serif);  font-weight: 600;
+    color: var(--laudu-red);
+    font-size: 1.18em; line-height: 1; letter-spacing: -0.02em;
+    display: inline-block; transform: translateY(0.04em);
+    padding: 0 0.06em;
+  }
+
+  /* ---------- Eyebrow ---------- */
+  .l-eyebrow {
+    font-family: var(--font-sans); font-weight: 400; font-size: 10px;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--fg-subtle);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+
+  /* ---------- Links / buttons (all hairline-underline caps) ---------- */
+  .l-link {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-family: var(--font-sans); font-weight: 400; font-size: 10px;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--fg); text-decoration: none; padding: 14px 0;
+    position: relative;
+    transition: color var(--dur-fast) var(--ease-out), letter-spacing var(--dur-base) var(--ease-out);
+  }
+  .l-link::after { content: ""; position: absolute; left: 0; right: 14px; bottom: 6px; height: 1px; background: var(--fg); transition: background var(--dur-fast) var(--ease-out), right var(--dur-base) var(--ease-out); }
+  .l-link .arrow { font-size: 14px; line-height: 1; transition: transform var(--dur-base) var(--ease-out); }
+  .laudu .l-link:hover { letter-spacing: 0.32em; }
+  .l-link:hover .arrow { transform: translateX(6px); }
+
+  .l-link--invert { color: #fff; }
+  .l-link--invert::after { background: #fff; }
+
+  /* ---------- Header ---------- */
+  /* Ross Mason header */
+  .l-header {
+    position: sticky; top: 0; z-index: 50;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 32px;
+    padding: 14px 32px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: saturate(160%) blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .l-header__left { display: flex; align-items: center; gap: 18px; justify-self: start; }
+  .l-header__brand { display: inline-flex; align-items: center; flex: none; }
+  .l-header__brand img { height: 20px; width: auto; display: block; transition: opacity var(--dur-fast) var(--ease-out); }
+  .l-header__brand:hover img { opacity: 0.65; }
+  .l-header__divider { width: 1px; height: 18px; background: var(--rule); flex: none; }
+  .l-header__spacer { justify-self: start; }
+  .l-header__mark { justify-self: center; display: inline-flex; align-items: center; flex: none; }
+  .l-header__mark img { height: 26px; width: auto; display: block; transition: opacity var(--dur-fast) var(--ease-out); }
+  .l-header__mark:hover img { opacity: 0.7; }
+  .l-header__practices {
+    font-family: var(--font-sans); font-weight: 500; font-size: 13px;
+    letter-spacing: 0; text-transform: none; color: var(--fg); line-height: 1;
+  }
+  .l-header__nav {
+    display: inline-flex; gap: 0; align-items: baseline; justify-self: start;
+    font-family: var(--font-sans); font-size: 13px; color: var(--fg);
+  }
+  .l-header__nav-sep { color: var(--fg); margin-right: 6px; }
+  .l-header__navlink, .l-header__navlink-q {
+    background: none; border: 0; cursor: pointer; padding: 0 6px;
+    text-decoration: none; font-family: var(--font-sans);
+    font-size: 13px; letter-spacing: 0; text-transform: none; line-height: 1;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .l-header__navlink { font-weight: 500; color: var(--fg); padding-left: 0; }
+  .l-header__navlink-q { font-weight: 400; color: rgba(10,10,10,0.45); }
+  .l-header__navlink-q:hover, .l-header__navlink:hover { color: var(--laudu-red); }
+  .l-header__navlink.is-active { color: var(--fg); }
+  .l-header__right { display: flex; gap: 16px; align-items: center; justify-self: end; }
+  .l-header__cta {
+    text-decoration: none;
+    font-family: var(--font-sans); font-weight: 500; font-size: 13px;
+    letter-spacing: 0; text-transform: none; color: var(--fg); line-height: 1.2;
+    border-bottom: 1px solid var(--fg); padding-bottom: 2px;
+    transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .laudu .l-header__cta { border-bottom: 1px solid var(--fg); }
+  .laudu .l-header__cta:hover { color: var(--laudu-red); border-bottom-color: var(--laudu-red); }
+
+  /* PUMP IT — micro switch */
+  .l-pump {
+    display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
+    padding: 6px 10px 6px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-sans); font-size: 9px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--fg-muted);
+    transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .l-pump:hover { border-color: var(--fg); color: var(--fg); }
+  .l-pump__dot {
+    width: 22px; height: 12px; border-radius: 999px;
+    background: var(--ink-15); position: relative;
+    transition: background var(--dur-base) var(--ease-out);
+  }
+  .l-pump__dot::after {
+    content: ""; position: absolute; left: 2px; top: 2px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .l-pump.is-on { border-color: var(--laudu-red); color: var(--laudu-red); }
+  .l-pump.is-on .l-pump__dot { background: var(--laudu-red); }
+  .l-pump.is-on .l-pump__dot::after { transform: translateX(10px); }
+  .l-pump__wave { display: inline-flex; gap: 2px; height: 10px; align-items: center; }
+  .l-pump__wave span { display: inline-block; width: 2px; background: currentColor; height: 3px; border-radius: 1px; opacity: 0.4; }
+  .l-pump.is-on .l-pump__wave span { animation: l-eq 900ms ease-in-out infinite; opacity: 1; }
+  .l-pump.is-on .l-pump__wave span:nth-child(2) { animation-delay: 120ms; }
+  .l-pump.is-on .l-pump__wave span:nth-child(3) { animation-delay: 240ms; }
+  .l-pump.is-on .l-pump__wave span:nth-child(4) { animation-delay: 360ms; }
+  @keyframes l-eq { 0%,100% { height: 3px; } 50% { height: 10px; } }
+
+  /* PUMP IT — over the hero image */
+  .l-hero__overlay-controls { pointer-events: auto; display: inline-flex; align-items: center; gap: 16px; }
+  .l-pump--over {
+    border-color: rgba(255,255,255,0.35); color: rgba(255,255,255,0.85);
+    background: rgba(0,0,0,0.18); backdrop-filter: saturate(140%) blur(6px);
+  }
+  .l-pump--over:hover { border-color: #fff; color: #fff; }
+  .l-pump--over .l-pump__dot { background: rgba(255,255,255,0.35); }
+  .l-pump--over.is-on { border-color: var(--laudu-red); color: #fff; background: rgba(226,35,26,0.18); }
+  .l-pump--over.is-on .l-pump__dot { background: var(--laudu-red); }
+
+  /* ---------- Hero — full-width image + display ---------- */
+  .l-hero { background: #fff; border-bottom: 1px solid var(--rule); }
+  .l-hero__topmeta {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 24px;
+    padding: 20px 40px; border-bottom: 1px solid var(--rule);
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--fg-subtle);
+  }
+  .l-hero__topmeta .cell { display: flex; align-items: center; gap: 10px; }
+  .l-hero__topmeta .cell strong { font-weight: 400; color: var(--fg); }
+  .l-hero__topmeta .cell .label { color: var(--fg-subtle); }
+  .l-hero__topmeta .cell .pulse {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--laudu-red);
+    box-shadow: 0 0 0 0 rgba(226,35,26,0.5);
+    animation: l-pulse 2.4s var(--ease-out) infinite;
+  }
+  @keyframes l-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(226,35,26,0.55); }
+    70% { box-shadow: 0 0 0 8px rgba(226,35,26,0); }
+    100% { box-shadow: 0 0 0 0 rgba(226,35,26,0); }
+  }
+
+  /* Full-width hero image */
+  .l-hero__image {
+    position: relative;
+    width: 100%;
+    height: clamp(420px, 62vh, 720px);
+    overflow: hidden;
+    background: var(--laudu-black);
+  }
+  .l-hero__image img {
+    width: 100%; height: 100%; display: block;
+    object-fit: cover;
+    position: relative; z-index: 1;
+  }
+  /* Scrim for headline legibility over the image */
+  .l-hero__image::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.08) 36%, rgba(0,0,0,0.55) 100%);
+  }
+  .l-hero__image-overlay {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 32px 40px;
+    color: #fff;
+  }
+  .l-hero__overlay-foot { display: flex; flex-direction: column; gap: 30px; }
+  .laudu .l-hero__overlay-h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(32px, 5.2vw, 88px); line-height: 0.94; letter-spacing: 0.02em;
+    margin: 0; color: #fff; max-width: 22ch;
+    text-shadow: 0 2px 48px rgba(0,0,0,0.4);
+  }
+  .l-hero__overlay-h .row { display: block; }
+  .l-hero__overlay-h .term { color: var(--laudu-red); }
+  .l-hero__image-overlay .top, .l-hero__image-overlay .bot {
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
+  .l-hero__image-overlay .top strong { color: #fff; font-weight: 400; }
+  .l-hero__overlay-logo { height: 22px; width: auto; display: block; }
+  .l-hero__image-overlay .frame { border: 1px solid rgba(255,255,255,0.25); padding: 6px 12px; font-size: 9px; }
+
+  /* Display lockup below image */
+  .l-hero__display {
+    padding: 56px 40px 64px;
+  }
+  .l-hero__display-inner { max-width: 1440px; margin: 0 auto; }
+  .laudu .l-hero__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(52px, 8.5vw, 128px);
+    line-height: 0.92; letter-spacing: 0;
+    margin: 0; color: var(--fg);
+  }
+  .l-hero__h .term { color: var(--laudu-red); }
+  .l-hero__h .row { display: block; }
+
+  .l-hero__meta-strip {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px;
+    align-items: flex-start;
+    padding-top: 0; margin-top: 0; border-top: 0;
+  }
+  .l-hero__meta-strip h6 {
+    font-family: var(--font-sans); font-weight: 400; font-size: 10px;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--fg-subtle); margin: 0 0 12px;
+  }
+  .l-hero__meta-strip p {
+    font-family: var(--font-sans); font-weight: 300; font-size: clamp(15px, 1.05vw, 17px);
+    line-height: 1.55; color: var(--fg); margin: 0; max-width: 38ch;
+  }
+  .l-hero__meta-strip .lead p {
+    font-family: var(--font-sans); font-weight: 300;
+    font-size: clamp(22px, 1.8vw, 30px); line-height: 1.32; max-width: 24ch;
+  }
+  .l-hero__meta-strip .actions { display: flex; justify-content: flex-end; align-items: flex-end; height: 100%; }
+
+  /* ---------- Imagery break (triptych) ---------- */
+  /* ---------- Values (cards) ---------- */
+  .l-values {
+    background: #fff;
+    padding: clamp(72px, 9vw, 140px) 40px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .l-values__inner { max-width: 1320px; margin: 0 auto; }
+  .l-values__head {
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: flex-end;
+    margin-bottom: clamp(48px, 6vw, 88px);
+  }
+  .l-values__head .num { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--laudu-red); }
+  .laudu .l-values__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(36px, 5vw, 72px); line-height: 0.96; letter-spacing: 0; margin: 12px 0 0; color: var(--fg);
+  }
+  .l-values__h .term { color: var(--laudu-red); }
+  .l-values__grid {
+    display: flex; gap: 28px; align-items: flex-start; justify-content: center;
+  }
+  .l-value {
+    flex: 1 1 0; max-width: 400px;
+    background: #fff; border-radius: 4px; overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 34px 90px -34px rgba(28,12,8,0.42), 0 8px 24px -14px rgba(28,12,8,0.26);
+    will-change: transform;
+  }
+  .l-value__media { position: relative; aspect-ratio: 3 / 2.2; overflow: hidden; background: #1a1110; }
+  .l-value__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.8s cubic-bezier(0.16, 1, 0.3, 1); }
+  .l-value:hover .l-value__media img { transform: scale(1.06); }
+  .l-value__num {
+    position: absolute; top: 14px; left: 16px; z-index: 2;
+    font-family: var(--font-display); font-weight: 900; font-size: 13px; letter-spacing: 0.04em;
+    color: #fff; mix-blend-mode: difference;
+  }
+  .l-value__body { padding: 28px 26px 32px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .laudu .l-value__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(22px, 1.8vw, 27px); line-height: 1; letter-spacing: -0.01em; margin: 0; color: var(--fg);
+  }
+  .l-value__lead { font-family: var(--font-sans); font-weight: 400; font-size: 16px; line-height: 1.4; color: var(--fg); margin: 0; }
+  .l-value__text { font-family: var(--font-sans); font-weight: 300; font-size: 14px; line-height: 1.6; color: var(--fg-muted); margin: 0; }
+  .l-value__means { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--rule); }
+  .l-value__means h4 { font-family: var(--font-sans); font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--fg-subtle); margin: 0 0 12px; }
+  .l-value__means ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .l-value__means li {
+    font-family: var(--font-sans); font-weight: 400; font-size: 14px; color: var(--fg); padding-left: 18px; position: relative;
+  }
+  .l-value__means li::before {
+    content: ""; position: absolute; left: 0; top: 8px; width: 7px; height: 7px;
+    background: var(--laudu-red); border-radius: 50%;
+  }
+  /* Floating stagger (no rotation) */
+  .l-value--2 { margin-top: 40px; }
+  .l-value--3 { margin-top: 18px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .l-value { animation: l-float 9s ease-in-out infinite; }
+    .l-value--2 { animation-duration: 11s; animation-delay: -2.5s; }
+    .l-value--3 { animation-duration: 10s; animation-delay: -4.5s; }
+  }
+  @keyframes l-float {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -12px; }
+  }
+  @media (max-width: 920px) {
+    .l-values__head { grid-template-columns: 1fr; gap: 20px; }
+    .l-values__grid { flex-direction: column; align-items: stretch; gap: 20px; }
+    .l-value, .l-value--2, .l-value--3 { max-width: none; margin-top: 0; animation: none; }
+    .l-value__media { aspect-ratio: 16 / 9; }
+  }
+
+  /* ---------- Intro — Why LAUDU (blue) ---------- */
+  .l-intro {
+    background: var(--laudu-blue);
+    padding: var(--s-11) 40px;
+    border-bottom: 1px solid rgba(10,10,10,0.12);
+  }
+  .l-intro__meta .rule { flex: 1; height: 1px; background: rgba(10,10,10,0.18); }
+  .l-intro__body { border-top: 1px solid rgba(10,10,10,0.16) !important; }
+  .l-intro__cluster .row { border-bottom: 1px solid rgba(10,10,10,0.16) !important; }
+  .l-intro__cluster .row:last-child { border-bottom: 0 !important; }
+  .l-intro__inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 56px;
+    text-align: left;
+  }
+  .l-intro__meta {
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    width: 100%;
+    padding-bottom: 24px; border-bottom: 1px solid var(--rule);
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--fg-subtle);
+  }
+  .laudu .l-intro__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(40px, 5.4vw, 88px); line-height: 0.98; letter-spacing: 0;
+    margin: 0; color: var(--fg); max-width: 22ch;
+  }
+  .l-intro__h .term { color: var(--laudu-red); }
+  .l-intro__h .small {
+    display: inline-block;
+    font-family: var(--font-sans); font-weight: 300; text-transform: none;
+    font-size: 0.36em; line-height: 1.4; color: var(--fg-muted);
+    letter-spacing: 0; vertical-align: middle;
+    margin-left: 0.4em; max-width: 14em;
+  }
+
+  .l-intro__body {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: flex-start;
+    padding-top: 24px; border-top: 1px solid var(--rule);
+  }
+  .l-intro__copy {
+    font-family: var(--font-sans); font-weight: 300;
+    font-size: clamp(17px, 1.25vw, 21px); line-height: 1.55;
+    color: var(--fg); margin: 0; max-width: 56ch;
+  }
+  .l-intro__copy strong { font-weight: 400; color: var(--fg); }
+  .l-intro__cluster {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .l-intro__cluster .row {
+    display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: baseline;
+    padding: 14px 0; border-bottom: 1px solid var(--rule);
+  }
+  .l-intro__cluster .row:last-child { border-bottom: 0; }
+  .l-intro__cluster .key {
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--fg-subtle);
+  }
+  .l-intro__cluster .val {
+    font-family: var(--font-sans); font-weight: 400; font-size: 15px; color: var(--fg);
+  }
+
+  /* ---------- Services ---------- */
+  .l-services {
+    background: #fff;
+    padding: var(--s-11) 40px var(--s-10);
+    border-bottom: 1px solid var(--rule);
+  }
+  .l-services__head {
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px;
+    align-items: flex-end; padding-bottom: 64px; border-bottom: 1px solid var(--fg);
+    max-width: 1440px; margin: 0 auto;
+  }
+  .l-services__lead { display: flex; flex-direction: column; gap: 16px; }
+  .l-services__lead .num {
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--fg-subtle);
+  }
+  .laudu .l-services__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(40px, 6vw, 96px); line-height: 0.96; letter-spacing: 0;
+    margin: 0; color: var(--fg);
+  }
+  .l-services__intro {
+    font-family: var(--font-sans); font-weight: 300; font-size: clamp(17px, 1.15vw, 20px); line-height: 1.5;
+    color: var(--fg); max-width: 48ch; margin: 0;
+  }
+  .l-services__list { max-width: 1440px; margin: 0 auto; }
+
+  .l-service { border-bottom: 1px solid var(--rule); }
+  .l-service:last-child { border-bottom: 1px solid var(--fg); }
+  .l-service summary {
+    list-style: none; cursor: pointer; padding: 36px 4px;
+    display: grid; grid-template-columns: 80px 1fr 1.4fr 32px; gap: 32px; align-items: baseline;
+    transition: padding-left var(--dur-base) var(--ease-out);
+  }
+  .l-service summary::-webkit-details-marker { display: none; }
+  .l-service summary:hover { padding-left: 20px; }
+  .l-service summary:hover .l-service__name { color: var(--laudu-red); }
+  .l-service__num {
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; color: var(--fg-subtle);
+  }
+  .l-service__name {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(28px, 3.4vw, 50px); line-height: 1.02; letter-spacing: 0;
+    color: var(--fg);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .l-service__tease {
+    font-family: var(--font-sans); font-weight: 300;
+    font-size: clamp(16px, 1.15vw, 19px); line-height: 1.45;
+    color: var(--fg); max-width: 38ch;
+  }
+  .l-service__toggle {
+    font-family: var(--font-sans); font-size: 22px; line-height: 1; justify-self: end;
+    color: var(--fg-subtle);
+    transition: transform var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .l-service[open] summary { padding-left: 20px; }
+  .l-service[open] .l-service__toggle { transform: rotate(45deg); color: var(--laudu-red); }
+
+  .l-service__body {
+    display: grid; grid-template-columns: 80px 1fr 1.4fr 32px; gap: 32px;
+    padding: 0 4px 56px 24px;
+    animation: l-fade-up var(--dur-slow) var(--ease-out);
+  }
+  @keyframes l-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .l-service__lede {
+    font-family: var(--font-sans); font-weight: 300;
+    font-size: clamp(16px, 1.15vw, 18px); line-height: 1.55;
+    color: var(--fg); max-width: 44ch; margin: 0;
+  }
+  .l-service__includes {
+    display: flex; flex-direction: column; gap: 16px;
+    padding-left: 32px; border-left: 1px solid var(--rule);
+  }
+  .l-service__includes h4 {
+    font-family: var(--font-sans); font-weight: 400; font-size: 10px;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--fg-subtle); margin: 0;
+  }
+  .l-service__includes ul {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px;
+  }
+  .l-service__includes li {
+    font-family: var(--font-sans); font-weight: 300; font-size: 14px;
+    color: var(--fg); padding: 10px 0; border-bottom: 1px solid var(--rule);
+    line-height: 1.3;
+  }
+
+  /* ---------- Work ---------- */
+  .l-work {
+    background: #fff;
+    padding: var(--s-11) 40px var(--s-10);
+    border-bottom: 1px solid var(--rule);
+  }
+  .l-work__head {
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px;
+    align-items: flex-end; padding-bottom: 64px; border-bottom: 1px solid var(--fg);
+    max-width: 1440px; margin: 0 auto;
+  }
+  .l-work__lead { display: flex; flex-direction: column; gap: 16px; }
+  .l-work__lead .num {
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--fg-subtle);
+  }
+  .laudu .l-work__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(40px, 6vw, 96px); line-height: 0.96; letter-spacing: 0;
+    margin: 0; color: var(--fg);
+  }
+  .l-work__intro {
+    font-family: var(--font-sans); font-weight: 300; font-size: clamp(17px, 1.15vw, 20px); line-height: 1.5;
+    color: var(--fg); max-width: 48ch; margin: 0;
+  }
+  .l-work__list { list-style: none; margin: 0; padding: 0; max-width: 1440px; margin: 0 auto; }
+  .l-work__row {
+    display: grid; grid-template-columns: 80px 1fr 1.6fr 1fr 32px; gap: 32px; align-items: center;
+    padding: 36px 4px; border-bottom: 1px solid var(--rule);
+    cursor: pointer; text-decoration: none; color: var(--fg);
+    transition: padding-left var(--dur-base) var(--ease-out);
+    position: relative;
+  }
+  .l-work__row:hover { padding-left: 20px; }
+  .l-work__row:hover .l-work__name { color: var(--laudu-red); }
+  .l-work__row:hover .l-work__thumb { opacity: 1; transform: translateY(-50%) scale(1); }
+  .l-work__row:hover .l-work__arrow { color: var(--laudu-red); transform: translate(6px,-6px); }
+  .l-work__num { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; color: var(--fg-subtle); }
+  .l-work__name {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(28px, 3.5vw, 52px); line-height: 1.02; letter-spacing: 0;
+    color: var(--fg);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .l-work__desc {
+    font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 1.5;
+    color: var(--fg); max-width: 42ch;
+  }
+  .l-work__cat { font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--fg-subtle); }
+  .l-work__arrow {
+    font-size: 18px; justify-self: end; color: var(--fg-subtle);
+    transition: transform var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .l-work__thumb {
+    position: absolute; right: 88px; top: 50%; transform: translateY(-50%) scale(0.96);
+    width: 200px; height: 130px; pointer-events: none; opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+    overflow: hidden;
+  }
+  .l-work__thumb-inner { position: absolute; inset: -10%; filter: blur(36px); }
+  .l-work__row[data-tone="sage"] .l-work__thumb-inner { background: radial-gradient(ellipse at 40% 50%, #5F6355, transparent 60%), radial-gradient(ellipse at 75% 70%, #D6C9BA, transparent 60%), #FCF5EB; }
+  .l-work__row[data-tone="slate"] .l-work__thumb-inner { background: radial-gradient(ellipse at 50% 50%, #2D3340, transparent 60%), radial-gradient(ellipse at 70% 70%, var(--laudu-orange), transparent 50%), var(--laudu-black); }
+  .l-work__row[data-tone="ink"]  .l-work__thumb-inner { background: radial-gradient(ellipse at 60% 50%, var(--laudu-red), transparent 55%), var(--laudu-black); }
+  .l-work__row[data-tone="violet"] .l-work__thumb-inner { background: radial-gradient(ellipse at 40% 50%, #AA6EFF, transparent 60%), radial-gradient(ellipse at 75% 65%, #6B3FBC, transparent 50%), #FAF7FF; }
+  .l-work__row[data-tone="wine"] .l-work__thumb-inner { background: radial-gradient(ellipse at 40% 50%, #632332, transparent 60%), radial-gradient(ellipse at 70% 65%, #706B55, transparent 55%), #FFF9F5; }
+  .l-work__row[data-tone="coral"] .l-work__thumb-inner { background: radial-gradient(ellipse at 40% 50%, var(--laudu-orange), transparent 55%), radial-gradient(ellipse at 75% 70%, var(--laudu-red), transparent 50%), var(--laudu-bone); }
+
+  .l-work__foot {
+    max-width: 1440px; margin: 0 auto;
+    padding-top: 48px; display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  }
+  .l-work__foot p { font-family: var(--font-sans); font-weight: 300; font-size: 15px; color: var(--fg-muted); margin: 0; }
+
+  /* ---------- CTA / Contact ---------- */
+  .l-cta {
+    background: #fff;
+    padding: var(--s-11) 40px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .l-cta__inner { max-width: 1440px; margin: 0 auto; }
+  .l-cta__meta {
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    padding-bottom: 24px; border-bottom: 1px solid var(--rule);
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--fg-subtle);
+  }
+  .l-cta__meta .rule { flex: 1; height: 1px; background: var(--rule); margin: 0 24px; }
+
+  .laudu .l-cta__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(48px, 8vw, 128px); line-height: 0.92; letter-spacing: 0;
+    margin: 80px 0 64px; color: var(--fg);
+    max-width: 14ch;
+  }
+  .l-cta__h .term { color: var(--laudu-red); }
+
+  .l-cta__row {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 64px;
+    padding-top: 56px; border-top: 1px solid var(--fg);
+  }
+  .l-cta__row .key {
+    display: block; font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--fg-subtle); margin-bottom: 14px;
+  }
+  .l-cta__row p {
+    font-family: var(--font-sans); font-weight: 300; font-size: 16px; line-height: 1.55;
+    color: var(--fg); margin: 0; max-width: 36ch;
+  }
+  .l-cta__row .lead {
+    font-family: var(--font-sans); font-weight: 300;
+    font-size: clamp(20px, 1.7vw, 28px); line-height: 1.35; max-width: 28ch; margin: 0 0 24px;
+  }
+  .l-cta__row a {
+    color: var(--fg); text-decoration: none;
+    border-bottom: 1px solid var(--fg);
+    transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .l-cta__row a:hover { color: var(--laudu-red); border-bottom-color: var(--laudu-red); }
+  .l-cta__actions { margin-top: 24px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .l-cta__note { font-family: var(--font-sans); font-weight: 300; font-size: 13px; color: var(--fg-subtle); }
+
+  /* ---------- Footer ---------- */
+  .l-footer {
+    background: var(--laudu-black); color: var(--laudu-bone);
+    padding: var(--s-10) 40px 32px;
+  }
+  .l-footer__inner { max-width: 1440px; margin: 0 auto; }
+  .l-footer__mast {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+    padding-bottom: 56px; border-bottom: 1px solid rgba(245,242,236,0.15);
+  }
+  .laudu .l-footer__brand {
+    margin: 0; padding: 0;
+    display: block;
+  }
+  .l-footer__brand img {
+    height: clamp(40px, 6vw, 88px); width: auto; display: block;
+  }
+  .l-footer__statement {
+    font-family: var(--font-sans); font-weight: 300; font-size: 16px; line-height: 1.55;
+    color: rgba(245,242,236,0.7); max-width: 36ch; margin: 0; align-self: flex-end;
+  }
+  .l-footer__cols {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 32px;
+    padding: 56px 0; border-bottom: 1px solid rgba(245,242,236,0.15);
+  }
+  .l-footer__col h6 {
+    font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: rgba(245,242,236,0.5); font-weight: 400; margin: 0 0 16px;
+  }
+  .l-footer__col a, .l-footer__col span {
+    display: block; font-family: var(--font-sans); font-weight: 300; font-size: 14px;
+    color: var(--laudu-bone); padding: 6px 0; text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .l-footer__col a:hover { color: var(--laudu-red); }
+  .l-footer__bottom {
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    padding-top: 28px;
+    font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(245,242,236,0.5);
+  }
+  .l-footer__bottom .laws { display: flex; gap: 28px; }
+
+  /* ---------- How We Work ---------- */
+  .l-process { background: #fff; padding: var(--s-11) 40px; border-bottom: 1px solid var(--rule); }
+  .l-process__inner { max-width: 1440px; margin: 0 auto; }
+  .l-process__head {
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: flex-end;
+    padding-bottom: 48px;
+  }
+  .l-process__lead { display: flex; flex-direction: column; gap: 16px; }
+  .l-process__lead .num { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--fg-subtle); }
+  .laudu .l-process__h {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(36px, 5vw, 72px); line-height: 0.96; letter-spacing: 0; margin: 0; color: var(--fg);
+  }
+  .l-process__h .term { color: var(--laudu-red); }
+  .l-process__intro { font-family: var(--font-sans); font-weight: 300; font-size: clamp(16px, 1.1vw, 19px); line-height: 1.55; color: var(--fg); max-width: 46ch; margin: 0; }
+  .l-process__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .l-process__step {
+    padding: 40px 28px 44px; display: flex; flex-direction: column; gap: 14px;
+    transition: background var(--dur-mid, 320ms) var(--ease-out), transform var(--dur-mid, 320ms) var(--ease-out);
+  }
+  .l-process__step:hover { background: var(--ink-04, #F4F4F3); transform: translateY(-6px); }
+  .l-process__step .n { font-family: var(--font-display); font-weight: 900; font-size: 13px; letter-spacing: 0; color: var(--laudu-red); transition: color var(--dur-fast, 140ms) var(--ease-out); }
+  .l-process__step h3 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: clamp(22px, 2.2vw, 32px); line-height: 1; letter-spacing: -0.01em; margin: 0; color: var(--fg); transition: color var(--dur-fast, 140ms) var(--ease-out); }
+  .l-process__step:hover h3 { color: var(--laudu-red); }
+  .l-process__step p { font-family: var(--font-sans); font-weight: 300; font-size: 15px; line-height: 1.55; color: var(--fg-muted); margin: 0; }
+
+  /* ---------- Testimonials ---------- */
+  .l-quotes { background: #fff; padding: var(--s-11) 40px; border-bottom: 1px solid var(--rule); }
+  .l-quotes__inner { max-width: 1440px; margin: 0 auto; }
+  .l-quotes__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; padding-bottom: 48px; border-bottom: 1px solid var(--fg); }
+  .laudu .l-quotes__h { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: clamp(28px, 3.4vw, 52px); line-height: 0.98; letter-spacing: 0; margin: 0; color: var(--fg); max-width: 20ch; }
+  .l-quotes__label { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--fg-subtle); white-space: nowrap; }
+  .l-quotes__grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .l-quotes__q { padding: 56px 40px 8px 0; border-right: 1px solid var(--rule); display: flex; flex-direction: column; gap: 24px; }
+  .l-quotes__q:last-child { border-right: 0; }
+  .l-quotes__q .mark { font-family: var(--font-display); font-weight: 900; font-size: 36px; line-height: 0.4; color: var(--laudu-red); }
+  .l-quotes__q blockquote { font-family: var(--font-sans); font-weight: 300; font-size: clamp(18px, 1.4vw, 22px); line-height: 1.42; color: var(--fg); margin: 0; }
+
+  @media (max-width: 1100px) {
+    .l-process__head { grid-template-columns: 1fr; gap: 24px; }
+    .l-process__grid { grid-template-columns: 1fr 1fr; }
+    .l-process__step { padding: 32px 24px 36px; }
+    .l-quotes__head { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .l-quotes__grid { grid-template-columns: 1fr; }
+    .l-quotes__q { border-right: 0; border-bottom: 1px solid var(--rule); padding: 40px 0 32px; }
+    .l-quotes__q:last-child { border-bottom: 0; }
+  }
+  @media (max-width: 640px) {
+    .l-process, .l-quotes { padding-left: 20px; padding-right: 20px; }
+    .l-process__grid { grid-template-columns: 1fr; }
+    .l-process__step { padding: 28px 20px 32px; }
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1100px) {
+    .l-hero__topmeta { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .l-hero__meta-strip { grid-template-columns: 1fr; gap: 32px; }
+    .l-intro__body { grid-template-columns: 1fr; gap: 32px; }
+    .l-services__head, .l-work__head { grid-template-columns: 1fr; gap: 32px; }
+    .l-cta__row { grid-template-columns: 1fr; gap: 32px; }
+    .l-footer__mast { grid-template-columns: 1fr; gap: 32px; }
+    .l-footer__cols { grid-template-columns: 1fr 1fr; }
+    .l-service summary { grid-template-columns: 40px 1fr 28px; }
+    .l-service__tease { display: none; }
+    .l-service__body { grid-template-columns: 40px 1fr; padding-bottom: 40px; padding-left: 4px; }
+    .l-service__body > :nth-child(4) { display: none; }
+    .l-service__includes { padding-left: 0; border-left: 0; padding-top: 24px; border-top: 1px solid var(--rule); grid-column: 1 / -1; }
+    .l-work__row { grid-template-columns: 40px 1fr 28px; }
+    .l-work__desc, .l-work__cat, .l-work__thumb { display: none; }
+  }
+  @media (max-width: 640px) {
+    .l-header { padding: 16px 20px; gap: 12px; grid-template-columns: auto 1fr; }
+    .l-header__nav, .l-header__practices, .l-header__divider, .l-header__spacer { display: none; }
+    .l-header__mark { justify-self: start; }
+    .l-header__mark img { height: 22px; }
+    .l-pump span:not(.l-pump__dot):not(.l-pump__wave) { display: none; }
+    .l-hero__topmeta { grid-template-columns: 1fr 1fr; padding: 14px 20px; }
+    .l-hero__display, .l-intro, .l-services, .l-work, .l-cta, .l-footer { padding-left: 20px; padding-right: 20px; }
+    .l-hero__image-overlay { padding: 20px; }
+    .l-service__includes ul { grid-template-columns: 1fr; }
+    .l-footer__cols { grid-template-columns: 1fr; }
+    .l-footer__bottom { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* =============================================================
+     SERVICES — dark variant with red accents
+     ============================================================= */
+  .l-services--dark {
+    background: var(--laudu-black);
+    color: var(--laudu-bone);
+    padding: clamp(80px, 9vw, 144px) 0 clamp(96px, 11vw, 168px);
+    border-bottom: 0;
+    position: relative;
+  }
+  .l-services--dark .l-services__inner {
+    max-width: 1440px; margin: 0 auto; padding: 0 40px;
+  }
+  .l-services--dark .l-services__head {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px;
+    align-items: flex-end;
+    padding-bottom: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.18);
+    margin-bottom: 0;
+  }
+  .l-services--dark .l-services__lead { display: flex; flex-direction: column; gap: 12px; }
+  .l-services--dark .l-services__lead .num {
+    font-family: var(--font-sans); font-weight: 400; font-size: 10px;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--laudu-red);
+  }
+  .l-services--dark .l-services__h {
+    font-family: var(--font-display); font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.02em;
+    font-size: clamp(44px, 6vw, 104px); line-height: 0.94;
+    color: var(--laudu-bone); margin: 0;
+  }
+  .l-services--dark .l-services__h .term { color: var(--laudu-red); }
+  .l-services--dark .l-services__intro {
+    font-family: var(--font-sans); font-weight: 300;
+    font-size: clamp(15px, 1.1vw, 17px); line-height: 1.6;
+    color: rgba(255,255,255,0.72); margin: 0; max-width: 42ch;
+  }
+
+  /* Service rows */
+  .l-services--dark .l-services__list { margin-top: 16px; }
+  .l-services--dark .l-service {
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+  }
+  .l-services--dark .l-service:last-child { border-bottom: 1px solid rgba(255,255,255,0.32); }
+  .l-services--dark .l-service summary {
+    list-style: none; cursor: pointer; padding: 36px 0;
+    display: grid; grid-template-columns: 90px 1.1fr 1.6fr 32px; gap: 32px;
+    align-items: baseline;
+    transition: padding-left var(--dur-base, 240ms) var(--ease-out, cubic-bezier(.22,.61,.36,1)), color var(--dur-fast, 140ms);
+    color: var(--laudu-bone);
+  }
+  .l-services--dark .l-service summary::-webkit-details-marker,
+  .l-services--dark .l-service summary::marker { display: none; content: ""; }
+  .l-services--dark .l-service summary:hover { padding-left: 16px; }
+  .l-services--dark .l-service summary:hover .l-service__name { color: var(--laudu-red); }
+  .l-services--dark .l-service summary:hover .l-service__toggle { color: var(--laudu-red); transform: rotate(45deg); }
+
+  .l-services--dark .l-service__num {
+    font-family: var(--font-sans); font-weight: 400; font-size: 10px;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .l-services--dark .l-service__name {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase;
+    font-size: clamp(28px, 3.5vw, 48px); line-height: 1; letter-spacing: -0.01em;
+    color: var(--laudu-bone);
+    transition: color var(--dur-fast, 140ms);
+  }
+  .l-services--dark .l-service__tease {
+    font-family: var(--font-sans); font-weight: 300; font-size: 16px; line-height: 1.55;
+    color: rgba(255,255,255,0.62);
+  }
+  .l-services--dark .l-service__toggle {
+    justify-self: end; color: rgba(255,255,255,0.55);
+    font-size: 22px; line-height: 1;
+    transition: transform var(--dur-base, 240ms), color var(--dur-fast, 140ms);
+  }
+  .l-services--dark .l-service[open] summary { padding-left: 16px; }
+  .l-services--dark .l-service[open] .l-service__name { color: var(--laudu-red); }
+  .l-services--dark .l-service[open] .l-service__toggle { transform: rotate(45deg); color: var(--laudu-red); }
+
+  .l-services--dark .l-service__body {
+    display: grid; grid-template-columns: 90px 1fr 1.4fr 32px; gap: 32px;
+    padding: 0 0 48px 16px;
+  }
+  .l-services--dark .l-service__lede {
+    font-family: var(--font-sans); font-weight: 300;
+    font-size: clamp(16px, 1.2vw, 19px); line-height: 1.55;
+    color: rgba(255,255,255,0.86); margin: 0; max-width: 44ch;
+  }
+  .l-services--dark .l-service__lede--muted { color: rgba(255,255,255,0.55); }
+  .l-services--dark .l-service__includes {
+    border-left: 1px solid rgba(255,255,255,0.16);
+    padding-left: 32px;
+  }
+  .l-services--dark .l-service__includes h4 {
+    font-family: var(--font-sans); font-weight: 400; font-size: 10px;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--laudu-red);
+    margin: 0 0 16px;
+  }
+  .l-services--dark .l-service__includes ul {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px;
+  }
+  .l-services--dark .l-service__includes li {
+    font-family: var(--font-sans); font-weight: 300; font-size: 14px; line-height: 1.4;
+    color: rgba(255,255,255,0.85);
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* =============================================================
+     WORK CAROUSEL
+     ============================================================= */
+  .l-workcar {
+    background: var(--laudu-black);
+    padding: 0 40px clamp(96px, 11vw, 168px);
+    position: relative;
+  }
+  .l-workcar__head {
+    max-width: 1440px; margin: 0 auto;
+    padding: clamp(80px, 10vw, 144px) 0 56px;
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: flex-end;
+  }
+  .l-workcar__head .num { font-family: var(--font-sans); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--laudu-red); }
+  .laudu .l-workcar__head .h { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: clamp(40px, 6vw, 96px); line-height: 0.96; letter-spacing: 0; color: var(--laudu-bone); margin: 10px 0 0; }
+  .l-workcar__head .h .term { color: var(--laudu-red); }
+  .l-workcar__head p { font-family: var(--font-sans); font-weight: 300; font-size: clamp(16px, 1.1vw, 19px); line-height: 1.55; color: rgba(255,255,255,0.72); margin: 0; max-width: 46ch; }
+
+  .l-workcar__shell {
+    max-width: 1440px; margin: 0 auto;
+    background: var(--bg, #FCFAF7);
+    color: var(--fg, #0A0A0A);
+    display: grid; grid-template-rows: auto 1fr auto;
+    box-shadow: 0 24px 96px -32px rgba(0,0,0,0.55);
+    overflow: hidden;
+  }
+
+  .l-workcar__bar {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 24px;
+    padding: 22px 32px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.04em;
+    color: var(--fg);
+  }
+  .l-workcar__bar-l { font-weight: 400; }
+  .l-workcar__bar-l .amp { font-family: var(--font-serif); color: var(--laudu-red); font-style: normal; font-weight: 400; }
+  .l-workcar__bar-c { justify-self: center; font-weight: 400; }
+  .l-workcar__bar-r {
+    justify-self: end;
+    color: var(--fg); text-decoration: none;
+    border-bottom: 1px solid var(--fg);
+    padding-bottom: 2px;
+    transition: color var(--dur-fast, 140ms), border-color var(--dur-fast, 140ms);
+  }
+  .laudu .l-workcar__bar-r { border-bottom: 1px solid var(--fg); }
+  .laudu .l-workcar__bar-r:hover { color: var(--laudu-red); border-bottom-color: var(--laudu-red); }
+
+  /* Rail of tiles */
+  .l-workcar__rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(132px, 1fr);
+    gap: 0;
+    padding: 56px 0 0;
+    overflow: hidden;
+    position: relative;
+    isolation: isolate;
+  }
+
+  .l-workcar__tile {
+    position: relative;
+    text-decoration: none; color: inherit;
+    display: grid; grid-template-rows: auto auto 1fr;
+    padding: 0 12px 0;
+    cursor: pointer;
+    transition: transform var(--dur-base, 240ms) var(--ease-out, cubic-bezier(.22,.61,.36,1));
+    border-bottom: 0;
+  }
+  .laudu .l-workcar__tile { border-bottom: 0; }
+  .l-workcar__num {
+    font-family: var(--font-sans); font-weight: 500; font-size: 13px;
+    color: var(--fg); padding: 0 0 12px;
+  }
+  .l-workcar__caption {
+    display: flex; flex-direction: column; gap: 4px; padding-bottom: 16px;
+    min-height: 56px;
+  }
+  .l-workcar__caption .name {
+    font-family: var(--font-sans); font-weight: 500; font-size: 14px; line-height: 1.25;
+    color: var(--fg);
+  }
+  .l-workcar__caption .tag {
+    font-family: var(--font-sans); font-weight: 400; font-size: 11px;
+    letter-spacing: 0.04em;
+    color: rgba(0,0,0,0.55);
+  }
+
+  .l-workcar__media {
+    position: relative;
+    aspect-ratio: 3/4;
+    background: #E6E6E5;
+    overflow: hidden;
+    transition: transform var(--dur-base, 240ms) var(--ease-out, cubic-bezier(.22,.61,.36,1));
+    transform-origin: center bottom;
+  }
+  .l-workcar__media::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.18) 100%);
+    z-index: 2;
+  }
+
+  /* Per-project tones — recoloured to match the case study palettes */
+  .tone-arete   { background: linear-gradient(150deg, #5F6355 0%, #4D523D 60%, #292929 100%); }
+  .tone-confero { background: linear-gradient(150deg, #0A1F1B 0%, #0E5C4C 50%, #AA6EFF 100%); }
+  .tone-chronos { background: linear-gradient(150deg, #14171A 0%, #2A2E33 60%, #C2562B 100%); }
+  .tone-cat     { background: linear-gradient(150deg, #0E1A2E 0%, #1A2A48 60%, #B89556 100%); }
+  .tone-tgc     { background: linear-gradient(150deg, #270316 0%, #632332 60%, #706B55 100%); }
+  .tone-pursue  { background: linear-gradient(150deg, #0F0F0F 0%, #003BAA 50%, #FF5900 100%); }
+
+  /* Active tile breaks above the row + widens */
+  .l-workcar__tile.is-active {
+    grid-row: 1; z-index: 5;
+    transform: translateY(-32px);
+  }
+  .l-workcar__tile.is-active .l-workcar__media {
+    aspect-ratio: 3/4.4;
+    transform: scaleY(1.18) scaleX(1.42);
+    transform-origin: center bottom;
+    box-shadow: 0 36px 80px -28px rgba(0,0,0,0.5);
+  }
+  .l-workcar__tile.is-active .l-workcar__caption .name { color: var(--laudu-red); }
+
+  /* Hover any tile when not active */
+  .l-workcar__tile:not(.is-active):hover { transform: translateY(-4px); }
+  .l-workcar__tile:not(.is-active):hover .l-workcar__media { filter: brightness(1.06); }
+  .l-workcar__tile:not(.is-active):hover .l-workcar__caption .name { color: var(--laudu-red); }
+
+  /* Foot row */
+  .l-workcar__foot {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    padding: 24px 32px 24px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    margin-top: 32px;
+  }
+  .l-workcar__foot-l {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-sans); font-size: 12px; color: var(--fg);
+  }
+  .l-workcar__foot-l button {
+    background: transparent; border: 0; cursor: pointer; padding: 4px 2px;
+    font-family: var(--font-sans); font-size: 12px; color: rgba(0,0,0,0.45);
+    transition: color var(--dur-fast, 140ms);
+  }
+  .l-workcar__foot-l button.is-on { color: var(--fg); }
+  .l-workcar__foot-l button:hover { color: var(--laudu-red); }
+  .l-workcar__foot-l .sep { color: rgba(0,0,0,0.4); }
+  .l-workcar__foot-r { justify-self: end; font-family: var(--font-sans); font-size: 12px; color: var(--fg); }
+
+  .l-workcar__wordmark {
+    justify-self: center;
+    display: inline-flex; align-items: center;
+    text-decoration: none; border: 0; padding-top: 8px;
+    margin-bottom: -24px;
+  }
+  .laudu .l-workcar__wordmark { border: 0; }
+  .l-workcar__wordmark img {
+    height: clamp(56px, 8vw, 112px); width: auto; display: block;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  .l-workcar__wordmark:hover img { opacity: 0.72; }
+
+  /* List mode (alternative) */
+  .l-workcar__shell[data-mode="list"] .l-workcar__rail {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+  .l-workcar__shell[data-mode="list"] .l-workcar__tile,
+  .l-workcar__shell[data-mode="list"] .l-workcar__tile.is-active {
+    grid-template-columns: 60px 1fr 1fr 120px 32px;
+    grid-template-rows: auto;
+    padding: 24px 32px;
+    transform: none;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .l-workcar__shell[data-mode="list"] .l-workcar__num { padding: 0; }
+  .l-workcar__shell[data-mode="list"] .l-workcar__caption {
+    padding: 0; min-height: 0;
+    flex-direction: row; gap: 16px; align-items: baseline;
+  }
+  .l-workcar__shell[data-mode="list"] .l-workcar__caption .name { font-family: var(--font-display); font-weight: 900; font-size: clamp(20px, 2vw, 28px); text-transform: uppercase; letter-spacing: -0.01em; }
+  .l-workcar__shell[data-mode="list"] .l-workcar__media {
+    aspect-ratio: 16/9;
+    transform: none;
+    width: 120px; box-shadow: none;
+    justify-self: end;
+  }
+  .l-workcar__shell[data-mode="list"] .l-workcar__tile.is-active .l-workcar__media { transform: none; box-shadow: none; }
+
+  @media (max-width: 1100px) {
+    .l-services--dark .l-services__head { grid-template-columns: 1fr; gap: 24px; }
+    .l-services--dark .l-service summary { grid-template-columns: 50px 1fr 28px; }
+    .l-services--dark .l-service__tease { display: none; }
+    .l-services--dark .l-service__body { grid-template-columns: 50px 1fr; padding-left: 0; }
+    .l-services--dark .l-service__body > :nth-child(4) { display: none; }
+    .l-services--dark .l-service__includes { grid-column: 1 / -1; border-left: 0; border-top: 1px solid rgba(255,255,255,0.14); padding-left: 0; padding-top: 24px; margin-top: 8px; }
+
+    .l-workcar { padding-left: 20px; padding-right: 20px; }
+    .l-workcar__head { grid-template-columns: 1fr; gap: 24px; padding-bottom: 40px; }
+    .l-workcar__bar { grid-template-columns: 1fr 1fr; }
+    .l-workcar__bar-c { display: none; }
+    .l-workcar__rail { grid-auto-columns: 70%; overflow-x: auto; scroll-snap-type: x mandatory; padding: 32px 12px 0; }
+    .l-workcar__tile { scroll-snap-align: start; }
+    .l-workcar__tile.is-active { transform: none; }
+    .l-workcar__tile.is-active .l-workcar__media { transform: none; box-shadow: 0 24px 56px -24px rgba(0,0,0,0.4); }
+    .l-workcar__foot { grid-template-columns: 1fr auto 1fr; }
+    .l-workcar__wordmark { font-size: clamp(48px, 14vw, 96px); }
+    .l-services--dark .l-service__includes ul { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .l-workcar__foot { grid-template-columns: 1fr; gap: 16px; justify-items: start; }
+    .l-workcar__foot-r { justify-self: start; }
+    .l-workcar__wordmark { margin-bottom: 0; }
+  }
+
+  /* ---------- Site-wide subtle reveal ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-on .reveal {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+    }
+    .reveal-on .reveal.is-in { opacity: 1 !important; transform: none !important; }
+
+    /* Hero headline entrance */
+    .l-hero__overlay-h .row {
+      opacity: 0; transform: translateY(20px);
+      animation: l-rise 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .l-hero__overlay-h .row:nth-child(2) { animation-delay: 0.12s; }
+    .l-hero__overlay-h .row:nth-child(3) { animation-delay: 0.24s; }
+    .l-hero__overlay-foot .bot { opacity: 0; animation: l-fade 1s ease 0.5s forwards; }
+    .l-hero__image-overlay .top { opacity: 0; animation: l-fade 0.9s ease 0.15s forwards; }
+  }
+  @keyframes l-rise { to { opacity: 1; transform: none; } }
+  @keyframes l-fade { to { opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="laudu">
+
+  <!-- ============ HEADER ============ -->
+  <header class="l-header">
+    <span class="l-header__spacer" aria-hidden="true"></span>
+    <a class="l-header__mark" href="#top" aria-label="LAUDU, home">
+      <img src="assets/laudu-logo-blackred.png" alt="LAUDU" />
+    </a>
+    <div class="l-header__right">
+      <a class="l-header__cta" href="#contact">Start a project</a>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="l-hero" id="top">
+    <div class="l-hero__topmeta">
+      <div class="cell"><span class="label">Index</span><strong>N° 01 · Homepage</strong></div>
+      <div class="cell"><span class="label">Studio</span><strong>London</strong></div>
+      <div class="cell"><span class="label">Hours</span><strong>Mon–Fri · 09:00–18:00</strong></div>
+      <div class="cell"><span class="pulse" aria-hidden="true"></span><strong>In session · taking briefs Q3 onward</strong></div>
+    </div>
+
+    <!-- Full-width hero image -->
+    <div class="l-hero__image">
+      <img src="assets/hero.webp" alt="" />
+      <div class="l-hero__image-overlay">
+        <div class="top">
+          <img class="l-hero__overlay-logo" src="assets/laudu-logo-white.png" alt="LAUDU" />
+          <div class="l-hero__overlay-controls">
+            <button class="l-pump l-pump--over" id="pump" type="button" aria-pressed="false" aria-label="Pump it">
+              <span class="l-pump__dot" aria-hidden="true"></span>
+              <span>Pump it</span>
+              <span class="l-pump__wave" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+            </button>
+            <span class="frame">2026</span>
+          </div>
+        </div>
+        <div class="l-hero__overlay-foot">
+          <h1 class="l-hero__overlay-h">
+            <span class="row">Building magnetic</span>
+            <span class="row">brands, experiences</span>
+            <span class="row">&amp; communities<span class="term">.</span></span>
+          </h1>
+          <div class="bot">
+            <span>Founder-led · London</span>
+            <span>Brands people want to be part of.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="l-hero__display">
+      <div class="l-hero__display-inner">
+        <div class="l-hero__meta-strip">
+          <div class="lead">
+            <h6>Statement</h6>
+            <p>A creative studio helping ambitious founders build brands people want to be part of.</p>
+          </div>
+          <div>
+            <h6>Practices</h6>
+            <p>Strategy. Identity. Websites. Campaigns. Experiences <span class="amp">&</span> Events.</p>
+          </div>
+          <div>
+            <h6>For</h6>
+            <p>Ambitious founders who have somewhere to go.</p>
+          </div>
+          <div class="actions">
+            <a href="#services" class="l-link">What we do <span class="arrow">↓</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES (dark) ============ -->
+  <section class="l-services l-services--dark" id="services">
+    <div class="l-services__inner">
+      <header class="l-services__head">
+        <div class="l-services__lead">
+          <span class="num">N° 02 · What we do</span>
+          <h2 class="l-services__h">Five practices.<br/>One studio<span class="term">.</span></h2>
+        </div>
+        <p class="l-services__intro">
+          From strategy and identity to websites, campaigns and events. We build the foundations that attract the right clients, opportunities and communities.
+        </p>
+      </header>
+
+      <div class="l-services__list">
+        <details class="l-service" open>
+          <summary>
+            <span class="l-service__num">N° 01</span>
+            <span class="l-service__name">Brand Strategy</span>
+            <span class="l-service__tease">The thinking before the doing.</span>
+            <span class="l-service__toggle" aria-hidden="true">+</span>
+          </summary>
+          <div class="l-service__body">
+            <span></span>
+            <p class="l-service__lede">
+              We uncover what makes your business different, define your positioning and create a strategic foundation that guides every decision moving forward.
+            </p>
+            <div class="l-service__includes">
+              <h4>Includes</h4>
+              <ul>
+                <li>Positioning</li>
+                <li>Brand strategy</li>
+                <li>Messaging</li>
+                <li>Audience definition</li>
+                <li>Tone of voice</li>
+                <li>Brand architecture</li>
+              </ul>
+            </div>
+            <span></span>
+          </div>
+        </details>
+
+        <details class="l-service">
+          <summary>
+            <span class="l-service__num">N° 02</span>
+            <span class="l-service__name">Brand Identity</span>
+            <span class="l-service__tease">How your brand looks, feels and shows up.</span>
+            <span class="l-service__toggle" aria-hidden="true">+</span>
+          </summary>
+          <div class="l-service__body">
+            <span></span>
+            <p class="l-service__lede">
+              We create distinctive visual identities that bring your strategy to life and give your audience something memorable to connect with.
+            </p>
+            <div class="l-service__includes">
+              <h4>Includes</h4>
+              <ul>
+                <li>Logo design</li>
+                <li>Visual identity systems</li>
+                <li>Brand guidelines</li>
+                <li>Art direction</li>
+                <li>Packaging</li>
+                <li>Brand assets</li>
+              </ul>
+            </div>
+            <span></span>
+          </div>
+        </details>
+
+        <details class="l-service">
+          <summary>
+            <span class="l-service__num">N° 03</span>
+            <span class="l-service__name">Websites</span>
+            <span class="l-service__tease">Built to work as hard as you do.</span>
+            <span class="l-service__toggle" aria-hidden="true">+</span>
+          </summary>
+          <div class="l-service__body">
+            <span></span>
+            <p class="l-service__lede">
+              We design and build websites that tell your story, convert visitors and create a seamless brand experience from first click to final enquiry.
+            </p>
+            <div class="l-service__includes">
+              <h4>Includes</h4>
+              <ul>
+                <li>Website design</li>
+                <li>Website development</li>
+                <li>Copywriting</li>
+                <li>SEO foundations</li>
+                <li>Landing pages</li>
+                <li>Content systems</li>
+              </ul>
+            </div>
+            <span></span>
+          </div>
+        </details>
+
+        <details class="l-service">
+          <summary>
+            <span class="l-service__num">N° 04</span>
+            <span class="l-service__name">Campaigns</span>
+            <span class="l-service__tease">Ideas that move people.</span>
+            <span class="l-service__toggle" aria-hidden="true">+</span>
+          </summary>
+          <div class="l-service__body">
+            <span></span>
+            <p class="l-service__lede">
+              From product launches and brand campaigns to social content and creative activations, we develop concepts that create attention for the right reasons.
+            </p>
+            <div class="l-service__includes">
+              <h4>Includes</h4>
+              <ul>
+                <li>Creative campaigns</li>
+                <li>Launch strategies</li>
+                <li>Content creation</li>
+                <li>Social campaigns</li>
+                <li>Art direction</li>
+                <li>Production</li>
+              </ul>
+            </div>
+            <span></span>
+          </div>
+        </details>
+
+        <details class="l-service">
+          <summary>
+            <span class="l-service__num">N° 05</span>
+            <span class="l-service__name">Events <span class="amp">&</span> Experiences</span>
+            <span class="l-service__tease">Designed to be talked about long after they end.</span>
+            <span class="l-service__toggle" aria-hidden="true">+</span>
+          </summary>
+          <div class="l-service__body">
+            <span></span>
+            <p class="l-service__lede">
+              We create experiences that bring brands to life, strengthen relationships and leave a lasting impression.
+            </p>
+            <div class="l-service__includes">
+              <h4>Includes</h4>
+              <ul>
+                <li>Launch events</li>
+                <li>Private dinners</li>
+                <li>Experiential activations</li>
+                <li>Networking events</li>
+                <li>Conferences</li>
+                <li>Community experiences</li>
+              </ul>
+            </div>
+            <span></span>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============ HOW WE WORK ============ -->
+  <section class="l-process" id="process">
+    <div class="l-process__inner">
+      <header class="l-process__head">
+        <div class="l-process__lead">
+          <span class="num">N° 03 · How we work</span>
+          <h2 class="l-process__h">Four steps.<br/>One direction<span class="term">.</span></h2>
+        </div>
+        <p class="l-process__intro">
+          A clear, collaborative process, so every decision feels intentional and the brand keeps moving from first conversation to launch and beyond.
+        </p>
+      </header>
+      <div class="l-process__grid">
+        <div class="l-process__step">
+          <span class="n">01</span>
+          <h3>Discover</h3>
+          <p>We immerse ourselves in your business, audience and ambitions to uncover what makes you different.</p>
+        </div>
+        <div class="l-process__step">
+          <span class="n">02</span>
+          <h3>Define</h3>
+          <p>We shape the strategy, positioning and story that will guide the brand.</p>
+        </div>
+        <div class="l-process__step">
+          <span class="n">03</span>
+          <h3>Design</h3>
+          <p>We bring the brand to life through identity, content, digital and experience.</p>
+        </div>
+        <div class="l-process__step">
+          <span class="n">04</span>
+          <h3>Deliver</h3>
+          <p>We launch, activate and support the brand as it grows.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VALUES ============ -->
+  <section class="l-values" id="values" aria-label="What we believe">
+    <div class="l-values__inner">
+      <header class="l-values__head">
+        <span class="num">N° 04 · What we believe</span>
+        <h2 class="l-values__h">Three things<br/>we hold to<span class="term">.</span></h2>
+      </header>
+      <div class="l-values__grid">
+
+        <article class="l-value l-value--1">
+          <div class="l-value__media">
+            <img src="assets/bloom-1.png" alt="" loading="lazy" />
+            <span class="l-value__num">01</span>
+          </div>
+          <div class="l-value__body">
+            <h3 class="l-value__h">Ambition over convention</h3>
+            <p class="l-value__lead">We don't follow the category. We challenge it.</p>
+            <p class="l-value__text">Laudu exists to create brands that stand out, not fit in. We push beyond the obvious, question assumptions and build work that gives businesses a competitive edge.</p>
+            <div class="l-value__means">
+              <h4>What this means</h4>
+              <ul>
+                <li>Brave thinking</li>
+                <li>Challenging the brief</li>
+                <li>Distinction, not decoration</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="l-value l-value--2">
+          <div class="l-value__media">
+            <img src="assets/bloom-2.png" alt="" loading="lazy" />
+            <span class="l-value__num">02</span>
+          </div>
+          <div class="l-value__body">
+            <h3 class="l-value__h">Momentum matters</h3>
+            <p class="l-value__lead">Good ideas are worthless if they never leave the room.</p>
+            <p class="l-value__text">We believe in moving quickly, making decisions and maintaining momentum. No endless decks. No unnecessary complexity. Just focused thinking that gets brands moving.</p>
+            <div class="l-value__means">
+              <h4>What this means</h4>
+              <ul>
+                <li>Speed with purpose</li>
+                <li>Clear communication</li>
+                <li>Action over perfection</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="l-value l-value--3">
+          <div class="l-value__media">
+            <img src="assets/bloom-3.png" alt="" loading="lazy" />
+            <span class="l-value__num">03</span>
+          </div>
+          <div class="l-value__body">
+            <h3 class="l-value__h">Built on relationships</h3>
+            <p class="l-value__lead">The best work comes from trust, not transactions.</p>
+            <p class="l-value__text">We work closely with founders, marketers and ambitious teams who want a genuine creative partner. We care deeply about the people behind the brand and build relationships that last.</p>
+            <div class="l-value__means">
+              <h4>What this means</h4>
+              <ul>
+                <li>Honesty</li>
+                <li>Loyalty</li>
+                <li>Long-term thinking</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTRO — Why LAUDU ============ -->
+  <section class="l-intro" id="intro">
+    <div class="l-intro__inner">
+      <div class="l-intro__meta">
+        <span>N° 05 · Why Laudu</span>
+        <span class="rule"></span>
+        <span>2026</span>
+      </div>
+
+      <h2 class="l-intro__h">
+        The magnetic<br/>difference<span class="term">.</span>
+        <span class="small"></span>
+      </h2>
+
+      <div class="l-intro__body">
+        <p class="l-intro__copy">We're not interested in work that simply looks good. We create brands that attract the right people, experiences that create genuine connection and communities that keep growing long after launch.
+
+Every project is approached with curiosity, honesty and a relentless focus on making your business more magnetic.</p>
+        <div class="l-intro__cluster">
+          <div class="row"><span class="key">Studio</span><span class="val">Founder-led · London</span></div>
+          <div class="row"><span class="key">Approach</span><span class="val">Curiosity · Honesty · Focus</span></div>
+          <div class="row"><span class="key">We build</span><span class="val">Brands · Experiences · Communities</span></div>
+          <div class="row"><span class="key">For</span><span class="val">Ambitious founders</span></div>
+          <div class="row"><span class="key">Books</span><span class="val">Q3 onward · limited</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="l-quotes">
+    <div class="l-quotes__inner">
+      <header class="l-quotes__head">
+        <h2 class="l-quotes__h">Trusted by founders building what's next.</h2>
+        <span class="l-quotes__label">N° 06 · Testimonials</span>
+      </header>
+      <div class="l-quotes__grid">
+        <div class="l-quotes__q">
+          <span class="mark">“</span>
+          <blockquote>Laudu understood our vision immediately and transformed it into a brand that feels bigger than we imagined.</blockquote>
+        </div>
+        <div class="l-quotes__q">
+          <span class="mark">“</span>
+          <blockquote>The process was clear, collaborative and genuinely enjoyable. Every decision felt intentional.</blockquote>
+        </div>
+        <div class="l-quotes__q">
+          <span class="mark">“</span>
+          <blockquote>They didn't just create a brand. They created momentum.</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA / Contact ============ -->
+  <section class="l-cta" id="contact">
+    <div class="l-cta__inner">
+      <div class="l-cta__meta">
+        <span>N° 07 · New work</span>
+        <span class="rule"></span>
+        <span>Reply within two working days</span>
+      </div>
+
+      <h2 class="l-cta__h">
+        Let's build something magnetic<span class="term">.</span>
+      </h2>
+
+      <div class="l-cta__row">
+        <div>
+          <p class="lead">Whether you're launching something new, repositioning an existing business or creating an experience people won't forget, we'd love to hear from you.</p>
+          <div class="l-cta__actions">
+            <a href="mailto:carly@laudu.co.uk" class="l-link">Start a project <span class="arrow">→</span></a>
+            <span class="l-cta__note">Typical reply within two working days.</span>
+          </div>
+        </div>
+        <div>
+          <span class="key">Direct</span>
+          <p><a href="mailto:carly@laudu.co.uk">carly@laudu.co.uk</a></p>
+        </div>
+        <div>
+          <span class="key">Studio</span>
+          <p>49 Charlotte Road<br/>London EC2A 3PD<br/>United Kingdom</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="l-footer">
+    <div class="l-footer__inner">
+      <div class="l-footer__mast">
+        <h3 class="l-footer__brand"><img src="assets/laudu-logo-white.png" alt="LAUDU" /></h3>
+        <p class="l-footer__statement">
+          A creative studio helping ambitious founders build brands people want to be part of. London. Brands, experiences and communities.
+        </p>
+      </div>
+
+      <div class="l-footer__cols">
+        <div class="l-footer__col">
+          <h6>Contact</h6>
+          <a href="mailto:carly@laudu.co.uk">carly@laudu.co.uk</a>
+        </div>
+        <div class="l-footer__col">
+          <h6>Studio</h6>
+          <span>49 Charlotte Road</span>
+          <span>London EC2A 3PD</span>
+          <span>United Kingdom</span>
+        </div>
+      </div>
+
+      <div class="l-footer__bottom">
+        <span>© LAUDU 2026 · Built to be magnetic.</span>
+        <div class="laws">
+          <span>Privacy</span>
+          <span>Terms</span>
+          <span>Cookies</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Site-wide subtle reveal on scroll
+  (function() {
+    const root = document.documentElement;
+    root.classList.add('reveal-on');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Single elements that fade/rise in
+    const singles = [
+      '.l-services__head', '.l-services__intro',
+      '.l-process__lead', '.l-process__intro',
+      '.l-values__head',
+      '.l-intro__meta', '.l-intro__h', '.l-intro__body',
+      '.l-quotes__head',
+      '.l-cta__meta', '.l-cta__h', '.l-cta__row',
+      '.l-footer__statement', '.l-footer__cols'
+    ];
+    singles.forEach((sel) => document.querySelectorAll(sel).forEach((el) => el.classList.add('reveal')));
+
+    // Groups that stagger
+    const groups = ['.l-service', '.l-process__step', '.l-value', '.l-quotes__q'];
+    groups.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el, i) => {
+        el.classList.add('reveal');
+        el.style.setProperty('--reveal-delay', (i * 85) + 'ms');
+      });
+    });
+
+    const targets = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+    if (reduce) {
+      targets.forEach((el) => el.classList.add('is-in'));
+      return;
+    }
+    let ticking = false;
+    function reveal() {
+      ticking = false;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      for (let i = targets.length - 1; i >= 0; i--) {
+        const el = targets[i];
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.92 && r.bottom > 0) {
+          el.classList.add('is-in');
+          targets.splice(i, 1);
+        }
+      }
+      if (targets.length === 0) {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+      }
+    }
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(reveal); }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    reveal();
+  })();
+
+  // Accordion — one open at a time
+  const services = document.querySelectorAll('.l-service');
+  services.forEach((s) => {
+    s.addEventListener('toggle', () => {
+      if (s.open) services.forEach((o) => { if (o !== s) o.removeAttribute('open'); });
+    });
+  });
+
+  // Pump it — toggles the studio track (local audio, loops)
+  const pumpBtn = document.getElementById('pump');
+  const pumpAudio = new Audio('assets/pumpit.mp3');
+  pumpAudio.loop = true;
+  pumpAudio.preload = 'none';
+  let isPumping = false;
+  pumpBtn.addEventListener('click', () => {
+    isPumping = !isPumping;
+    pumpBtn.classList.toggle('is-on', isPumping);
+    pumpBtn.setAttribute('aria-pressed', isPumping ? 'true' : 'false');
+    if (isPumping) {
+      pumpAudio.currentTime = 0;
+      pumpAudio.play().catch(() => {});
+    } else {
+      pumpAudio.pause();
+    }
+  });
+
+  // Smooth scroll for in-page anchors
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href').slice(1);
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) {
+        e.preventDefault();
+        const top = el.getBoundingClientRect().top + window.scrollY - 64;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
