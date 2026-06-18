@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Arete - The Team</title>
+<style>
+@font-face {
+  font-family: "IvyPresto";
+  src: url("https://static.wixstatic.com/ufonts/607006_ccd50e22c2d8440a83b45cd1954b70ab/woff2/file.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "NHaas";
+  src: url("https://static.wixstatic.com/ufonts/dd852a_d6bbd1dfc40b407586bbf6bc5085dcfd/woff2/file.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "NHaas";
+  src: url("https://static.wixstatic.com/ufonts/a7f197_7914746ba43a4b6092a2faa3147c3f61/woff2/file.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+html, body { margin: 0; background: #5f6355; -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; }
+
+.section { padding: clamp(56px, 8vw, 120px) clamp(20px, 5vw, 56px); }
+.wrap { margin: 0 auto; max-width: 1280px; }
+.stack { display: flex; flex-direction: column; }
+
+.eyebrow {
+  font-family: "NHaas", Helvetica, Arial, sans-serif; font-weight: 500; font-size: 0.8125rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: rgba(252,245,235,0.62);
+}
+.eyebrow-accent {
+  font-family: "NHaas", Helvetica, Arial, sans-serif; font-weight: 500; font-size: 0.8125rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: #4d523d;
+}
+
+.t-hero {
+  font-family: "IvyPresto", Georgia, serif; font-weight: 300;
+  font-size: clamp(3.6rem, 12.5vw, 12rem); line-height: 0.94;
+  letter-spacing: -0.028em; margin: 0; color: #fcf5eb;
+}
+.t-dlg {
+  font-family: "IvyPresto", Georgia, serif; font-weight: 300;
+  font-size: clamp(2.3rem, 4.6vw, 3.8rem); line-height: 1.06;
+  letter-spacing: -0.014em; margin: 0; color: #fcf5eb;
+}
+.t-dsm {
+  font-family: "IvyPresto", Georgia, serif; font-weight: 300;
+  font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.14;
+  letter-spacing: -0.01em; margin: 0; color: #292929;
+}
+.t-body {
+  font-family: "NHaas", Helvetica, Arial, sans-serif; font-weight: 300; font-size: 1.0625rem;
+  line-height: 1.78; color: #5c554c; margin: 0;
+}
+.t-lead {
+  font-family: "NHaas", Helvetica, Arial, sans-serif; font-weight: 300;
+  font-size: clamp(1.05rem,1.3vw,1.24rem); line-height: 1.7; margin: 0;
+  color: rgba(252,245,235,0.62);
+}
+
+.team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(32px,3.4vw,56px) clamp(24px,3vw,48px); }
+@media (max-width: 720px) { .team-grid { grid-template-columns: 1fr; max-width: 560px; margin-inline: auto; } }
+
+.t-card {
+  cursor: pointer; background: none; border: 0; padding: 0; text-align: left;
+  display: flex; flex-direction: column; gap: clamp(16px,1.4vw,24px);
+  font: inherit; color: inherit;
+}
+.t-portrait { position: relative; aspect-ratio: 4/5; overflow: hidden; background: #f4ecdf; }
+.t-portrait img {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%;
+  display: block; transition: transform 1200ms cubic-bezier(0.22,0.61,0.36,1), filter 760ms cubic-bezier(0.22,0.61,0.36,1);
+}
+.t-card:hover .t-portrait img { filter: grayscale(1); transform: scale(1.03); }
+
+.t-meta { display: flex; gap: clamp(16px,1.4vw,26px); align-items: baseline; }
+.t-index {
+  font-family: "IvyPresto", Georgia, serif; font-weight: 300;
+  font-size: clamp(1.05rem,1.2vw,1.3rem); color: #d6c9ba; line-height: 1;
+}
+.t-name {
+  font-family: "IvyPresto", Georgia, serif; font-weight: 300;
+  font-size: clamp(2rem, 2.9vw, 2.9rem); line-height: 1.02; letter-spacing: -0.016em;
+  color: #fcf5eb; display: block;
+}
+.t-role {
+  font-family: "NHaas", Helvetica, Arial, sans-serif; font-weight: 500; font-size: 0.75rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: #d6c9ba;
+  display: block; margin-top: 12px;
+}
+.t-readbio {
+  font-family: "NHaas", Helvetica, Arial, sans-serif; font-weight: 500; font-size: 0.6875rem;
+  letter-spacing: 0.24em; text-transform: uppercase; color: rgba(252,245,235,0.62);
+  display: inline-flex; align-items: center; gap: 9px; margin-top: 14px;
+  transition: gap 320ms cubic-bezier(0.22,0.61,0.36,1), color 320ms cubic-bezier(0.22,0.61,0.36,1);
+}
+.t-card:hover .t-readbio { gap: 14px; color: #d6c9ba; }
+
+.scrim {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
+  padding: clamp(14px,4vw,48px); background: rgba(22,18,13,0.62);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none; transition: opacity 420ms cubic-bezier(0.22,0.61,0.36,1);
+}
+.scrim.show { opacity: 1; pointer-events: auto; }
+
+.modal {
+  width: 100%; max-width: 1180px; height: min(88vh,900px); background: #fcf5eb;
+  position: relative; display: grid; grid-template-columns: 0.92fr 1.08fr; overflow: hidden;
+  box-shadow: 0 50px 100px -40px rgba(20,16,12,0.7);
+  transform: translateY(26px) scale(0.985); opacity: 0;
+  transition: transform 560ms cubic-bezier(0.22,0.61,0.36,1), opacity 460ms cubic-bezier(0.22,0.61,0.36,1);
+}
+.scrim.show .modal { transform: none; opacity: 1; }
+
+.modal-media { background: #f4ecdf; }
+.modal-media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; display: block; }
+.modal-body { padding: clamp(28px,3vw,56px); overflow-y: auto; display: flex; align-items: center; }
+
+.modal-close {
+  position: absolute; top: 18px; right: 18px; z-index: 3; width: 42px; height: 42px;
+  display: grid; place-items: center; cursor: pointer;
+  border: 1px solid rgba(41,41,41,0.22); border-radius: 50%;
+  background: rgba(252,245,235,0.6); color: #292929; font-size: 22px; line-height: 1;
+}
+.modal-close:hover { background: #d6c9ba; border-color: #d6c9ba; }
+
+.hairline { height: 1px; background: rgba(41,41,41,0.14); width: 100%; border: 0; }
+
+.contacts { display: flex; flex-wrap: wrap; align-items: center; }
+.contacts a {
+  font-family: "NHaas", Helvetica, Arial, sans-serif; font-weight: 500; font-size: 0.75rem;
+  letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+  color: #5c554c; padding: 4px 0;
+}
+.contacts a:hover { color: #4d523d; }
+.contacts .sep { color: rgba(41,41,41,0.22); padding: 0 14px; }
+
+@media (max-width: 720px) {
+  .modal { grid-template-columns: 1fr; height: auto; max-height: 92vh; }
+  .modal-media { height: 46vh; }
+  .modal-body { align-items: flex-start; }
+}
+
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity 800ms cubic-bezier(0.22,0.61,0.36,1), transform 800ms cubic-bezier(0.22,0.61,0.36,1); }
+.reveal.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<section class="section" style="padding-top:clamp(72px,10vw,128px);padding-bottom:clamp(28px,4vw,48px)">
+  <div class="wrap">
+    <div class="reveal stack" style="gap:2rem">
+      <span class="eyebrow">About &middot; The Team</span>
+      <h1 class="t-hero">Who we are.</h1>
+      <p class="t-lead" style="max-width:30em">The people behind the collective. Selective, global, and built on character &mdash; select any name to read their story.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:clamp(28px,4vw,52px)">
+  <div class="wrap">
+    <div class="team-grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="section" style="background:#292929">
+  <div class="wrap stack" style="align-items:center;text-align:center;gap:2.5rem;max-width:960px;margin:0 auto">
+    <div class="reveal stack" style="align-items:center;gap:2.5rem">
+      <p class="t-dlg">Aret&#x0113; was founded to change the standard: no pointless gatherings, no wasted introductions &mdash; only trusted access, meaningful forums, and connections that stand the test of time.</p>
+    </div>
+  </div>
+</section>
+
+<div class="scrim" id="scrim">
+  <div class="modal">
+    <button class="modal-close" id="mc">&times;</button>
+    <div class="modal-media"><img id="mi" src="" alt="" /></div>
+    <div class="modal-body">
+      <div class="stack" style="gap:1.5rem">
+        <div class="stack" style="gap:0.75rem">
+          <span class="eyebrow-accent" id="mr"></span>
+          <h2 class="t-dsm" id="mn"></h2>
+        </div>
+        <div class="stack" style="gap:1rem" id="mb"></div>
+        <div class="hairline" style="margin:0.5rem 0;max-width:320px"></div>
+        <div class="contacts" id="ml"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var P="https://laudu.co.uk/assets/site/assets/photography/team/";
+var T=[
+{id:"r",n:"Rhiannon Winter Van Ross",p:"rhiannon.png",r:"Founder & Chief Executive Officer",b:["With 15 years spent creating some of the most respected global networks for private client lawyers, trust and estate litigators, and General Counsel, Rhiannon Winter Van Ross has become a defining voice in the world of legal and private wealth leadership. Honoured with the Women's Council Emerging Leader Award, where judges described her as a 'force of nature', she is recognised for her rare ability to build trusted communities that drive meaningful collaboration and influence.","As Founder & CEO of Arete, Rhiannon is shaping a business where excellence, integrity, and influence converge. She is passionate about creating spaces where exceptional people can think boldly, connect deeply, and shape what comes next. Guided by a belief that character is the foundation of lasting success, she chose the name Arete - the ancient Greek ideal of virtue and excellence - as a reflection of her philosophy in life and leadership."],ph:"+447818114157",e:"rhiannon@aretememberships.com",li:"https://www.linkedin.com/in/rhiannon-winter-van-ross-b162b34b/"},
+{id:"a",n:"Anita Franklin",p:"anita.png",r:"Chief Intelligence Officer",b:["Anita is an English-qualified private client lawyer by background, having spent over a decade advising ultra-high-net worth clients on complex, cross-border disputes and high-stakes situations. Known for her precision and depth of judgment, she advises at the point where wealth, power, and legacy intersect. Ranked and recognised in Legal 500, Best Lawyers, Citywealth, Private Client Global Elite, and the Spears Index, Anita's work reflects both technical excellence and human understanding.","At Arete, she leads Intelligence, designing the strategic architecture that enables trusted connections across the private-client world. Drawing on more than a decade as a private client lawyer at leading U.S law firms, she brings a rare dual perspective: the ability to see through the eyes of both adviser and principal. She translates complexity into clarity and connection into influence, ensuring that insight serves both precision and purpose. For Anita, true intelligence lies in understanding deeply and acting with integrity."],ph:"+447738288021",e:"anita@aretememberships.com",li:"https://www.linkedin.com/in/anita-franklin/"},
+{id:"h",n:"Hannah Van Ross",p:"hannah.png",r:"Chief Financial Officer",b:["Hannah is a respected financial strategist and trusted adviser to entrepreneurial families, founder led businesses, corporate clients and financial institutions. Formerly a partner at Moore Kingston Smith LLP (previously Shipleys LLP), she has led complex mandates across succession planning, compliance, governance and generational wealth. Recognised in Accountancy Age's 35 Under 35, she is known for her calm authority, clarity, and commercial instinct in guiding clients through pivotal moments of growth and transition.","At Arete, Hannah oversees the group's financial stewardship and the structural integrity of its growing business units. She focuses on building a strong, transparent foundation that enables the business to thrive, ensuring every decision supports long-term success and shared trust.","Outside work, Hannah loves connecting with people, ideas and experiences. You'll often find her running, in the gym, or planning her next spontaneous adventure."],ph:"+447513136974",e:"hannah@aretememberships.com",li:"https://www.linkedin.com/in/hannah-van-ross/"},
+{id:"s",n:"Sophie Lovegrove",p:"sophie.png",r:"Global Head of Member Operations",b:["Sophie is a specialist in understated luxury events, known for her ability to design experiences that feel effortless, refined, and quietly powerful. With over 15 years' experience delivering high-end events across law, finance, film, and creative industries, she brings a rare blend of strategic precision and intuitive taste to every project she leads.","Working most recently as the Events Director at one of the worlds largest law firms, Sophie has extensive knowledge of creating intimate and bespoke events across the globe. Her work defines modern corporate luxury: elevated, personal, and never overstated.","Respected for her calm authority, creative vision and meticulous execution, Sophie has become a trusted partner to senior executives, partners, and family offices seeking to deliver moments that build lasting connection and brand distinction."],ph:"+447968527613",e:"sophie@aretememberships.com",li:"https://uk.linkedin.com/in/sophie-lovegrove-04727623"}
+];
+var g=document.getElementById("grid");
+T.forEach(function(m,i){
+  var c=document.createElement("button");
+  c.className="t-card reveal";
+  c.style.transitionDelay=(i*110)+"ms";
+  c.innerHTML='<div class="t-portrait"><img src="'+P+m.p+'" alt="'+m.n+'" loading="lazy"></div><div class="t-meta"><span class="t-index">'+String(i+1).padStart(2,"0")+'</span><span style="display:block"><span class="t-name">'+m.n+'</span><span class="t-role">'+m.r+'</span><span class="t-readbio">Read bio &rarr;</span></span></div>';
+  c.onclick=function(){openM(m.id)};
+  g.appendChild(c);
+});
+var sc=document.getElementById("scrim");
+function openM(id){
+  var m=T.find(function(x){return x.id===id});
+  if(!m)return;
+  document.getElementById("mi").src=P+m.p;
+  document.getElementById("mi").alt=m.n;
+  document.getElementById("mn").textContent=m.n;
+  document.getElementById("mr").textContent=m.r;
+  document.getElementById("mb").innerHTML=m.b.map(function(p){return'<p class="t-body">'+p+'</p>'}).join("");
+  document.getElementById("ml").innerHTML='<a href="https://wa.me/'+m.ph+'" target="_blank">WhatsApp</a><span class="sep">&middot;</span><a href="mailto:'+m.e+'">Email</a><span class="sep">&middot;</span><a href="'+m.li+'" target="_blank">LinkedIn</a>';
+  document.body.style.overflow="hidden";
+  requestAnimationFrame(function(){sc.classList.add("show")});
+}
+function closeM(){sc.classList.remove("show");document.body.style.overflow=""}
+document.getElementById("mc").onclick=closeM;
+sc.onmousedown=function(e){if(e.target===sc)closeM()};
+document.onkeydown=function(e){if(e.key==="Escape")closeM()};
+var obs=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add("visible");obs.unobserve(e.target)}})},{threshold:0.12});
+document.querySelectorAll(".reveal").forEach(function(el){obs.observe(el)});
+</script>
+</body>
+</html>
