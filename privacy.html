@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@font-face{font-family:'TWK Lausanne';src:url('https://jazzy-kangaroo-288f88.netlify.app/lausanne-100.otf') format('opentype');font-weight:100;font-style:normal;font-display:swap}
+@font-face{font-family:'TWK Lausanne';src:url('https://jazzy-kangaroo-288f88.netlify.app/lausanne-200.otf') format('opentype');font-weight:200;font-style:normal;font-display:swap}
+@font-face{font-family:'TWK Lausanne';src:url('https://jazzy-kangaroo-288f88.netlify.app/lausanne-300.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+</style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#091028;--navy2:#0d1530;
+  --fg:#f4f1ea;--fg2:rgba(244,241,234,.72);--fg3:rgba(244,241,234,.48);
+  --accent:#f86801;
+  --hair:rgba(244,241,234,.12);--hair2:rgba(244,241,234,.22);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font:'TWK Lausanne','Helvetica Neue',Arial,sans-serif;
+}
+html,body{background:var(--navy);color:var(--fg);font-family:var(--font);font-weight:300;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{font-weight:300}
+
+.head{padding:96px 0 72px;border-bottom:1px solid var(--hair);background:var(--navy);position:relative;overflow:hidden}
+.head::before{content:"";position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(circle at 100% 0%,rgba(248,104,1,.10),rgba(248,104,1,.02) 35%,transparent 65%);pointer-events:none}
+.wrap{max-width:1440px;margin:0 auto;padding:0 48px;position:relative}
+@media(max-width:720px){.wrap{padding:0 24px}}
+
+.eyebrow{display:flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg2);margin-bottom:24px}
+.eyebrow .num{color:var(--fg)}
+.eyebrow .rule{width:48px;height:1px;background:var(--hair2)}
+
+h1{font-size:clamp(56px,8vw,132px);font-weight:200;letter-spacing:-.03em;line-height:.95;color:var(--fg);margin:0 0 32px;max-width:14ch;text-wrap:balance}
+.meta{display:flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg3);font-weight:300}
+.meta .dot{color:var(--hair2)}
+
+.body{padding:96px 0 120px;background:var(--navy)}
+.inner{max-width:760px;margin:0 auto;padding:0 48px}
+@media(max-width:720px){.inner{padding:0 24px}}
+
+.lede{font-size:clamp(22px,2vw,28px);font-weight:200;letter-spacing:-.01em;line-height:1.35;color:var(--fg);margin:0 0 40px;max-width:32ch}
+.body p{font-size:16px;line-height:1.7;color:var(--fg2);font-weight:300;margin:0 0 18px}
+
+.section{margin-top:72px;padding-top:56px;border-top:1px solid var(--hair)}
+@media(max-width:720px){.section{margin-top:48px;padding-top:40px}}
+.section h2{font-size:clamp(24px,2.4vw,32px);font-weight:300;letter-spacing:-.01em;line-height:1.15;color:var(--fg);margin:0 0 28px;display:flex;align-items:baseline;gap:18px}
+.section h2 .n{font-size:11px;letter-spacing:.22em;color:var(--accent);font-variant-numeric:tabular-nums;font-weight:400}
+.section h3{font-size:17px;font-weight:400;letter-spacing:.04em;text-transform:uppercase;color:var(--fg);margin:32px 0 14px}
+
+.list{list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:6px}
+.list li{position:relative;padding-left:22px;font-size:16px;line-height:1.6;color:var(--fg2);font-weight:300}
+.list li::before{content:"+";position:absolute;left:0;color:var(--accent);font-weight:200}
+
+.callout{border-left:2px solid var(--accent);padding:4px 0 4px 18px;font-size:17px;color:var(--fg);font-weight:300;margin:4px 0 24px}
+
+.contact{margin-top:24px;border-top:1px solid var(--hair)}
+.contact .line{display:grid;grid-template-columns:140px 1fr;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--hair)}
+@media(max-width:520px){.contact .line{grid-template-columns:1fr;gap:4px}}
+.contact .k{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg3);font-weight:300}
+.contact .v{font-size:16px;color:var(--fg);font-weight:300}
+.contact a.v:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">—</span><span class="rule"></span><span>Legal</span></div>
+    <h1>Privacy Policy</h1>
+    <div class="meta">
+      <span>ChronosBuild LLC</span>
+      <span class="dot">·</span>
+      <span>Last updated: 22 May 2026</span>
+    </div>
+  </div>
+</header>
+
+<main class="body">
+  <div class="inner">
+    <p class="lede">Welcome to Chronos.</p>
+    <p>ChronosBuild LLC ("Chronos", "we", "us", or "our") respects your privacy and is committed to protecting the personal information you share with us. This Privacy Policy explains how we collect, use, store and protect information when you use our website, platform, products and services.</p>
+    <p>By using our website or services, you agree to the practices described in this Privacy Policy.</p>
+
+    <div class="section">
+      <h2><span class="n">01</span>Information we collect</h2>
+      <p>We may collect and process the following types of information.</p>
+      <h3>Information you provide directly</h3>
+      <p>This includes information you voluntarily provide when you:</p>
+      <ul class="list">
+        <li>Submit a contact form</li><li>Request a proposal or consultation</li><li>Create an account</li><li>Upload project documentation</li><li>Communicate with us by email or phone</li><li>Subscribe to updates or marketing communications</li>
+      </ul>
+      <p>This information may include:</p>
+      <ul class="list">
+        <li>Name</li><li>Company name</li><li>Job title</li><li>Email address</li><li>Phone number</li><li>Billing information</li><li>Property and project information</li><li>Renovation schedules, specifications and documentation</li>
+      </ul>
+      <h3>Information collected automatically</h3>
+      <p>When you use our website or platform, we may automatically collect:</p>
+      <ul class="list">
+        <li>IP address</li><li>Browser type and device information</li><li>Operating system</li><li>Website usage data</li><li>Pages visited and session activity</li><li>Cookies and analytics data</li>
+      </ul>
+      <h3>Project and operational data</h3>
+      <p>As part of delivering our services, we may process operational information related to:</p>
+      <ul class="list">
+        <li>Multifamily renovation projects</li><li>Unit-level specifications</li><li>Material selections and palettes</li><li>Procurement schedules</li><li>Delivery tracking</li><li>Logistics and installation sequencing</li>
+      </ul>
+      <p>This data is used solely to provide and improve Chronos services.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">02</span>How we use your information</h2>
+      <p>We use your information to:</p>
+      <ul class="list">
+        <li>Provide and operate our services</li><li>Manage renovation workflows and logistics</li><li>Coordinate procurement and delivery</li><li>Respond to enquiries and requests</li><li>Improve platform functionality and user experience</li><li>Communicate updates and service information</li><li>Maintain security and prevent fraud</li><li>Comply with legal and regulatory obligations</li>
+      </ul>
+      <p>We may also use aggregated, anonymised data for internal analysis and performance reporting.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">03</span>Sharing of information</h2>
+      <p class="callout">We do not sell your personal information.</p>
+      <p>We may share information with trusted third parties where necessary to operate our services, including:</p>
+      <ul class="list">
+        <li>Manufacturing and supply partners</li><li>Logistics and shipping providers</li><li>Technology and cloud service providers</li><li>Payment processors</li><li>Professional advisers and legal consultants</li>
+      </ul>
+      <p>All third parties are required to handle your information securely and only for authorised purposes.</p>
+      <p>We may also disclose information if required by law or to protect our legal rights.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">04</span>Data storage and security</h2>
+      <p>We take reasonable technical and organisational measures to protect your information from:</p>
+      <ul class="list">
+        <li>Unauthorised access</li><li>Loss or theft</li><li>Misuse</li><li>Disclosure or alteration</li>
+      </ul>
+      <p>While we work to protect your data, no online system can guarantee absolute security.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">05</span>Data retention</h2>
+      <p>We retain information only for as long as necessary to:</p>
+      <ul class="list">
+        <li>Deliver our services</li><li>Fulfil contractual obligations</li><li>Meet legal, accounting or regulatory requirements</li><li>Resolve disputes and enforce agreements</li>
+      </ul>
+      <p>When data is no longer required, we securely delete or anonymise it.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">06</span>Cookies and analytics</h2>
+      <p>Our website may use cookies and similar technologies to:</p>
+      <ul class="list">
+        <li>Improve website performance</li><li>Understand user behaviour</li><li>Remember preferences</li><li>Support analytics and marketing efforts</li>
+      </ul>
+      <p>You can control cookies through your browser settings.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">07</span>Your rights</h2>
+      <p>Depending on your location and applicable laws, you may have rights to:</p>
+      <ul class="list">
+        <li>Access your personal information</li><li>Correct inaccurate information</li><li>Request deletion of your information</li><li>Restrict or object to processing</li><li>Withdraw consent</li><li>Request data portability</li>
+      </ul>
+      <p>To exercise these rights, please contact us using the details below.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">08</span>Third-party services</h2>
+      <p>Our website or platform may contain links to third-party websites or services. We are not responsible for the privacy practices or content of external sites.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">09</span>International data transfers</h2>
+      <p>Your information may be transferred to and processed in countries outside your jurisdiction where our partners or service providers operate. We take reasonable steps to ensure appropriate safeguards are in place.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">10</span>Children's privacy</h2>
+      <p>Chronos services are intended for business and professional use. We do not knowingly collect personal information from children under 13.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">11</span>Changes to this privacy policy</h2>
+      <p>We may update this Privacy Policy periodically. Any changes will be posted on this page with an updated revision date.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">12</span>Historical data and brand transition</h2>
+      <p>Some statistics, project data and performance information referenced on this website originate from work carried out under our previous trading name, Tempus. Following a strategic restructure and rebrand, Tempus now operates as Chronos. While our name and brand identity have evolved, the team, expertise and underlying services remain fundamentally the same. Historical data has been included to accurately reflect our experience and track record and should be understood as part of the continued evolution of the business.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="n">13</span>Contact us</h2>
+      <p>If you have questions about this Privacy Policy or how your information is handled, please contact:</p>
+      <div class="contact">
+        <div class="line"><span class="k">Company</span><span class="v">ChronosBuild LLC</span></div>
+        <div class="line"><span class="k">Email</span><a class="v" href="mailto:hello@chronosbuild.com">hello@chronosbuild.com</a></div>
+        <div class="line"><span class="k">Website</span><a class="v" href="https://www.chronosbuild.com" id="siteLink">chronosbuild.com</a></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function(){
+  var s=document.getElementById('siteLink');
+  if(s)s.addEventListener('click',function(e){e.preventDefault();window.top.location.href='https://www.chronosbuild.com';});
+})();
+</script>
+</body>
+</html>
