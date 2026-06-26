@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aretē — Navigation</title>
+<style>
+  @font-face{font-family:"Ivy Presto Display";src:url("https://static.wixstatic.com/ufonts/607006_ccd50e22c2d8440a83b45cd1954b70ab/woff2/file.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap;}
+  @font-face{font-family:"Neue Haas Grotesk";src:url("https://static.wixstatic.com/ufonts/dd852a_d6bbd1dfc40b407586bbf6bc5085dcfd/woff2/file.woff2") format("woff2");font-weight:100 400;font-style:normal;font-display:swap;}
+  @font-face{font-family:"Neue Haas Grotesk";src:url("https://static.wixstatic.com/ufonts/a7f197_7914746ba43a4b6092a2faa3147c3f61/woff2/file.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap;}
+
+  :root{
+    --olive:#5f6355; --moss:#4d523d; --beige:#d6c9ba; --cream:#fcf5eb; --charcoal:#1c1c1c;
+    --ink:#292929; --muted:#8c8073; --hair:rgba(41,41,41,.14); --subtle:rgba(41,41,41,.22);
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --display:"Ivy Presto Display","Times New Roman",serif;
+    --sans:"Neue Haas Grotesk","Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:transparent;-webkit-font-smoothing:antialiased;font-family:var(--sans);}
+  a{text-decoration:none;color:inherit;}
+  button{font:inherit;background:none;border:0;cursor:pointer;color:inherit;}
+
+  /* bar */
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding:0 clamp(20px,4vw,48px);height:76px;background:rgba(252,245,235,.92);
+    backdrop-filter:blur(16px) saturate(1.1);-webkit-backdrop-filter:blur(16px) saturate(1.1);
+    border-bottom:1px solid var(--hair);}
+  .brand{flex:none;display:inline-flex;align-items:center;}
+  .brand img{height:21px;}
+
+  .nav{display:flex;align-items:center;gap:clamp(14px,1.8vw,30px);flex:1;justify-content:center;}
+  .navlink{position:relative;font-weight:500;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+    white-space:nowrap;color:var(--ink);opacity:.7;padding:6px 0;display:inline-flex;align-items:center;gap:7px;transition:opacity .2s var(--ease);}
+  .navlink:hover,.item:hover .navlink{opacity:1;}
+  .navlink .ul{position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--olive);transform:scaleX(0);transform-origin:center;transition:transform .3s var(--ease);}
+  .item:hover .navlink .ul,.navlink.active .ul{transform:scaleX(1);}
+  .chev{transition:transform .3s var(--ease);}
+  .item.open .chev{transform:rotate(180deg);}
+
+  .actions{flex:none;display:flex;align-items:center;gap:clamp(14px,1.6vw,24px);}
+  .btn{font-weight:500;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;padding:11px 22px;
+    border:1px solid var(--olive);background:var(--olive);color:var(--cream);transition:all .18s var(--ease);white-space:nowrap;}
+  .btn:hover{background:var(--moss);border-color:var(--moss);}
+
+  /* dropdown */
+  .item{position:relative;}
+  .menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(-6px);min-width:232px;margin-top:14px;
+    background:rgba(252,245,235,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--hair);box-shadow:0 28px 60px -36px rgba(41,41,41,.5);padding:10px;
+    opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s var(--ease),transform .28s var(--ease),visibility .28s;}
+  .menu::before{content:"";position:absolute;left:0;right:0;top:-16px;height:16px;}
+  .item.open .menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+  .menu a{display:block;font-weight:400;font-size:.92rem;letter-spacing:.01em;color:var(--ink);padding:12px 14px;border-radius:2px;transition:background .15s var(--ease),color .15s var(--ease);}
+  .menu a .sub{display:block;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+  .menu a:hover{background:rgba(95,99,85,.1);color:var(--moss);}
+
+  /* account (member) */
+  .acct{position:relative;display:inline-flex;align-items:center;gap:10px;}
+  .acct-trig{display:inline-flex;align-items:center;gap:10px;color:var(--ink);}
+  .acct-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--subtle);color:var(--ink);flex:none;}
+  .acct-name{font-weight:300;font-size:.95rem;letter-spacing:.01em;white-space:nowrap;}
+  .acct-menu{position:absolute;top:100%;right:0;min-width:260px;margin-top:16px;background:var(--charcoal);
+    border:1px solid rgba(252,245,235,.08);box-shadow:0 34px 72px -34px rgba(0,0,0,.7);padding:22px 26px 18px;text-align:right;
+    opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);transition:opacity .28s var(--ease),transform .28s var(--ease),visibility .28s;}
+  .acct-menu::before{content:"";position:absolute;left:0;right:0;top:-16px;height:16px;}
+  .acct.open .acct-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);}
+  .acct-lead{font-weight:400;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:#6f6f6a;padding:14px 0 4px;}
+  .acct-link{display:block;font-weight:300;font-size:1.05rem;letter-spacing:.01em;color:#f3ede3;padding:7px 0;transition:color .15s var(--ease);}
+  .acct-link:hover{color:var(--beige);}
+  .acct-div{height:1px;background:rgba(252,245,235,.14);margin:12px 0 4px;}
+
+  /* burger / drawer */
+  .burger{display:none;flex-direction:column;gap:6px;padding:6px;flex:none;}
+  .burger span{display:block;width:26px;height:1.5px;background:var(--ink);}
+  .drawer{position:fixed;inset:0;z-index:90;background:var(--charcoal);display:flex;flex-direction:column;
+    min-height:100vh;min-height:100dvh;
+    padding:22px clamp(20px,6vw,40px) 36px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .drawer.open{opacity:1;pointer-events:auto;}
+  .drawer-top{display:flex;align-items:center;justify-content:space-between;}
+  .drawer-top img{height:20px;}
+  .drawer-x{color:var(--cream);font-family:var(--display);font-size:30px;line-height:1;}
+  .drawer-nav{display:flex;flex-direction:column;gap:4px;margin-top:24px;}
+  .drawer-nav a,.drawer-sec>button{display:block;font-family:var(--display);font-weight:300;font-size:1.7rem;
+    letter-spacing:-.01em;color:var(--cream);padding:10px 0;text-align:left;width:100%;}
+  .drawer-sub{padding-left:16px;}
+  .drawer-sub a{font-family:var(--sans);font-weight:400;font-size:.95rem;letter-spacing:.02em;color:rgba(252,245,235,.6);padding:7px 0;}
+  .drawer-foot{margin-top:auto;padding-top:24px;border-top:1px solid rgba(252,245,235,.18);display:flex;flex-direction:column;gap:14px;}
+  .drawer-foot .acct-lead{text-align:left;color:rgba(252,245,235,.55);}
+
+  @media (max-width:1080px){ .nav,.actions{display:none;} .burger{display:flex;} }
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<script>
+/* ============================================================
+   ARETĒ — site navigation (self-contained, for a Wix HtmlComponent)
+   Lives in one iframe shown on every page. The Wix site code
+   (masterPage.js) tells it who is logged in and passes that member's
+   personal member-area URLs:
+     parent -> { type:'aretenav:member', loggedIn, name, slug }
+     iframe -> { type:'aretenav:ready' }     (handshake)
+     iframe -> { type:'aretenav:login' }      (open Wix login)
+     iframe -> { type:'aretenav:logout' }     (Wix logout)
+     iframe -> { type:'aretenav:height', px }  (so dropdowns aren't clipped)
+     iframe -> { type:'aretenav:drawer', open } (mobile menu opened/closed —
+                 lets Wix promote the frame to a fixed full-screen overlay)
+   Links use target="_top" so the whole site navigates, not the iframe.
+   ============================================================ */
+
+var WM_OLIVE = "data:image/svg+xml,%3Csvg%20fill%3D%22%235f6355%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20497.47%20120.21%22%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath%20d%3D%22M191.94%2C119.65h0c-1.4.28-7.3.56-10.65.56-7.83%2C0-10.34-5.87-27.95-41.65-2.8-5.59-6.43-6.43-10.9-6.43h-9.5v31.03c0%2C10.34.14%2C16.49%2C9.64%2C16.49h-27.54c9.5%2C0%2C10.06-6.15%2C10.06-16.49V34.39c0-10.34-.56-16.49-10.06-16.49h30.47c20.41%2C0%2C33.27%2C10.9%2C33.27%2C27.12%2C0%2C14.12-11.46%2C22.64-23.06%2C25.86v.28c3.91%2C2.66%2C7.27%2C8.81%2C10.2%2C14.4%2C13%2C25.16%2C17.72%2C34.11%2C26.03%2C34.11ZM132.93%2C69.89h11.74c17.33%2C0%2C25.44-9.22%2C25.44-24.32s-7.83-25.44-25.3-25.44h-6.57c-3.35%2C0-5.31%2C1.68-5.31%2C5.03v44.73Z%22%2F%3E%3Cpath%20d%3D%22M290.31%2C97.7l-3.08%2C21.94h-68.91c9.5%2C0%2C10.06-6.15%2C10.06-16.49V34.39c0-10.34-.56-16.49-10.06-16.49h66.81l1.68%2C19.43h-.84c-6.43-15.38-10.06-17.19-25.16-17.19h-24.6v49.76h19.57c12.02%2C0%2C14.96-3.08%2C16.91-13.42h0v30.05h0c-1.96-9.5-4.89-14.4-16.91-14.4h-19.57v38.58c0%2C4.47%2C1.4%2C6.71%2C5.59%2C6.71h21.25c15.1%2C0%2C19.71-1.82%2C27.26-19.71h0Z%22%2F%3E%3Cpath%20d%3D%22M393.05%2C37.32h0c-6.43-15.38-10.9-17.19-26-17.19h-5.87v83.03c0%2C10.34.56%2C16.49%2C10.06%2C16.49h-27.96c9.5%2C0%2C10.06-6.15%2C10.06-16.49V20.13h-5.87c-15.1%2C0-19.57%2C1.82-26%2C17.19h0l1.68-19.43h68.21l1.68%2C19.43Z%22%2F%3E%3Cpath%20d%3D%22M497.47%2C97.7l-3.08%2C21.94h-68.91c9.5%2C0%2C10.06-6.15%2C10.06-16.49V34.39c0-10.34-.56-16.49-10.06-16.49h66.81l1.68%2C19.43h0c-6.43-15.38-10.9-17.19-26-17.19h-24.6v49.77h19.57c12.02%2C0%2C14.96-3.08%2C16.91-13.42h0v30.05h0c-1.96-9.5-4.89-14.4-16.91-14.4h-19.57v38.57c0%2C4.47%2C1.4%2C6.71%2C5.59%2C6.71h21.25c15.1%2C0%2C19.71-1.82%2C27.26-19.71h0ZM480.13%2C0l-.7%2C4.19h-37.32l.7-4.19h37.32Z%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M58.98%2C119.65h26.84c-6.01-.56-8.53-5.87-12.72-17.89l-6.59-19.17-1.11-3.22-21.14-61.48h0s-.99-3.07-.99-3.07l-4.09%2C12.32%2C1.33%2C3.88%2C13.29%2C38.86h-30.02v.27l-3.26%2C11.17-4.34%2C12.61c-5.86%2C16.91-9.5%2C25.15-16.21%2C25.71h22.5c-10.91-.56-9.23-8.38-3.64-24.88l4.19-14.72-.07-.03%2C2.3-7.89h29.29l1.91%2C5.59h0l3.89%2C11.62h0l5.44%2C15.36c3.35%2C9.78.98%2C14.39-6.85%2C14.95Z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E";
+var WM_BEIGE = "data:image/svg+xml,%3Csvg%20fill%3D%22%23d6c9ba%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20497.47%20120.21%22%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath%20d%3D%22M191.94%2C119.65h0c-1.4.28-7.3.56-10.65.56-7.83%2C0-10.34-5.87-27.95-41.65-2.8-5.59-6.43-6.43-10.9-6.43h-9.5v31.03c0%2C10.34.14%2C16.49%2C9.64%2C16.49h-27.54c9.5%2C0%2C10.06-6.15%2C10.06-16.49V34.39c0-10.34-.56-16.49-10.06-16.49h30.47c20.41%2C0%2C33.27%2C10.9%2C33.27%2C27.12%2C0%2C14.12-11.46%2C22.64-23.06%2C25.86v.28c3.91%2C2.66%2C7.27%2C8.81%2C10.2%2C14.4%2C13%2C25.16%2C17.72%2C34.11%2C26.03%2C34.11ZM132.93%2C69.89h11.74c17.33%2C0%2C25.44-9.22%2C25.44-24.32s-7.83-25.44-25.3-25.44h-6.57c-3.35%2C0-5.31%2C1.68-5.31%2C5.03v44.73Z%22%2F%3E%3Cpath%20d%3D%22M290.31%2C97.7l-3.08%2C21.94h-68.91c9.5%2C0%2C10.06-6.15%2C10.06-16.49V34.39c0-10.34-.56-16.49-10.06-16.49h66.81l1.68%2C19.43h-.84c-6.43-15.38-10.06-17.19-25.16-17.19h-24.6v49.76h19.57c12.02%2C0%2C14.96-3.08%2C16.91-13.42h0v30.05h0c-1.96-9.5-4.89-14.4-16.91-14.4h-19.57v38.58c0%2C4.47%2C1.4%2C6.71%2C5.59%2C6.71h21.25c15.1%2C0%2C19.71-1.82%2C27.26-19.71h0Z%22%2F%3E%3Cpath%20d%3D%22M393.05%2C37.32h0c-6.43-15.38-10.9-17.19-26-17.19h-5.87v83.03c0%2C10.34.56%2C16.49%2C10.06%2C16.49h-27.96c9.5%2C0%2C10.06-6.15%2C10.06-16.49V20.13h-5.87c-15.1%2C0-19.57%2C1.82-26%2C17.19h0l1.68-19.43h68.21l1.68%2C19.43Z%22%2F%3E%3Cpath%20d%3D%22M497.47%2C97.7l-3.08%2C21.94h-68.91c9.5%2C0%2C10.06-6.15%2C10.06-16.49V34.39c0-10.34-.56-16.49-10.06-16.49h66.81l1.68%2C19.43h0c-6.43-15.38-10.9-17.19-26-17.19h-24.6v49.77h19.57c12.02%2C0%2C14.96-3.08%2C16.91-13.42h0v30.05h0c-1.96-9.5-4.89-14.4-16.91-14.4h-19.57v38.57c0%2C4.47%2C1.4%2C6.71%2C5.59%2C6.71h21.25c15.1%2C0%2C19.71-1.82%2C27.26-19.71h0ZM480.13%2C0l-.7%2C4.19h-37.32l.7-4.19h37.32Z%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M58.98%2C119.65h26.84c-6.01-.56-8.53-5.87-12.72-17.89l-6.59-19.17-1.11-3.22-21.14-61.48h0s-.99-3.07-.99-3.07l-4.09%2C12.32%2C1.33%2C3.88%2C13.29%2C38.86h-30.02v.27l-3.26%2C11.17-4.34%2C12.61c-5.86%2C16.91-9.5%2C25.15-16.21%2C25.71h22.5c-10.91-.56-9.23-8.38-3.64-24.88l4.19-14.72-.07-.03%2C2.3-7.89h29.29l1.91%2C5.59h0l3.89%2C11.62h0l5.44%2C15.36c3.35%2C9.78.98%2C14.39-6.85%2C14.95Z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E";
+
+/* --- link map (edit paths here if your Wix routes differ) --- */
+var BASE = "";  // same-domain root; links are relative so they work on any domain
+var TOP = [
+  { label:"Trusted Access", href:"/private-clients" },
+  { label:"Membership", href:"/membership" },
+  { label:"Forum Editions", href:"/forum" },
+  { label:"Timeless Editorial", menu:[
+    { label:"L’Héritage", href:"/editorial", sub:"The Imprint" },
+    { label:"The Library", href:"/library", sub:"Members’ Editorial" }
+  ]},
+  { label:"About", menu:[
+    { label:"The Team", href:"/theteam" },
+    { label:"Possibilities", href:"/possibilities" },
+    { label:"Press", href:"/press" }
+  ]}
+];
+
+/* member-area menu. {slug} is replaced with the logged-in member's slug. */
+function accountModel(slug){
+  return [
+    { lead:"My Account", href:"/members-area/"+slug+"/my-account" },
+    { label:"Events", href:"/event-list" },
+    { label:"Calendar", href:"/calendar" },
+    { label:"Agenda", href:"/agenda" },
+    { lead:"The Members", href:"/themembers" },
+    { label:"My Wallet", href:"/members-area/"+slug+"/my-wallet" },
+    { label:"My Orders", href:"/members-area/"+slug+"/my-orders" },
+    { divider:true },
+    { label:"Log Out", logout:true }
+  ];
+}
+
+var STATE = { member:false, name:"", slug:"", bridged:false };
+var BASE_H = 76;
+
+/* --- bridge --- */
+function post(m){ try{ if(window.parent && window.parent!==window) window.parent.postMessage(m,"*"); }catch(e){} }
+window.addEventListener("message", function(e){
+  var d = e.data; if(!d||typeof d!=="object") return;
+  if(d.type==="aretenav:member"){ STATE.bridged=true; STATE.member=!!d.loggedIn; STATE.name=d.name||""; STATE.slug=d.slug||""; render(); }
+});
+function reqLogin(){ if(STATE.bridged) post({type:"aretenav:login"}); else { STATE.member=true; STATE.name="Carly Dunne"; STATE.slug="carlylauradunne47591"; render(); } }
+function reqLogout(){ if(STATE.bridged) post({type:"aretenav:logout"}); else { STATE.member=false; render(); } }
+function sendHeight(px){ post({ type:"aretenav:height", px:Math.ceil(px) }); }
+/* Full device-screen height for the mobile drawer. The drawer is fixed to the
+   iframe's own viewport, so the iframe itself must grow to cover the screen —
+   window.innerHeight is just the collapsed (76px) frame, which is why the menu
+   used to be clipped. screen.height tracks the physical screen and survives the
+   mobile address bar collapsing, so the menu always fills the viewport. */
+function fullHeight(){
+  return Math.max(
+    (window.screen && screen.height) || 0,
+    window.innerHeight || 0,
+    document.documentElement.clientHeight || 0,
+    700
+  );
+}
+/* Navigate the whole site. In Wix the iframe is sandboxed, so we ask the parent
+   (Site code) to change the page. We ONLY navigate directly when there is no
+   parent at all (true standalone) — never inside the Wix iframe, which Wix
+   refuses to frame ("Forbidden"). */
+function go(href){
+  if(!href) return;
+  post({ type:"aretenav:nav", href:href });           // ask Wix to navigate
+  if(window.parent === window){ location.href = href; } // only if truly standalone
+}
+document.addEventListener("click", function(e){
+  var a = e.target.closest('a[href]');
+  if(a){ var h=a.getAttribute("href"); if(h && h.charAt(0)==="/"){ e.preventDefault(); go(h); } }
+}, true);
+
+/* --- render --- */
+function navLinks(){
+  return TOP.map(function(t,i){
+    if(t.menu){
+      var items = t.menu.map(function(m){
+        return '<a href="'+BASE+m.href+'" target="_top">'+m.label+(m.sub?'<span class="sub">'+m.sub+'</span>':'')+'</a>';
+      }).join("");
+      return '<div class="item" data-i="'+i+'"><button class="navlink" onclick="toggleItem('+i+',event)">'+t.label
+        + ' <svg class="chev" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M1.5 3.5L5 7l3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        + '<span class="ul"></span></button><div class="menu">'+items+'</div></div>';
+    }
+    return '<div class="item"><a class="navlink" href="'+BASE+t.href+'" target="_top">'+t.label+'<span class="ul"></span></a></div>';
+  }).join("");
+}
+function actions(){
+  if(STATE.member){
+    var rows = accountModel(STATE.slug||"me").map(function(a){
+      if(a.divider) return '<div class="acct-div"></div>';
+      if(a.logout) return '<button class="acct-link" onclick="reqLogout()">Log Out</button>';
+      if(a.lead) return '<a class="acct-link" href="'+BASE+a.href+'" target="_top">'+a.lead+'</a>';
+      return '<a class="acct-link" href="'+BASE+a.href+'" target="_top">'+a.label+'</a>';
+    }).join("");
+    return '<div class="acct" id="acct"><button class="acct-trig" onclick="toggleAcct(event)">'
+      + '<span class="acct-avatar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.3"/><path d="M5 19.5c0-3.6 3.1-5.6 7-5.6s7 2 7 5.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>'
+      + '<span class="acct-name">Hello '+(STATE.name||"Member")+'</span>'
+      + '<svg class="chev" width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M1.5 3.5L5 7l3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      + '</button><div class="acct-menu">'+rows+'</div></div>';
+  }
+  return '<button class="navlink" style="opacity:.7" onclick="reqLogin()">Log In</button>'
+    + '<a class="btn" href="'+BASE+'/apply" target="_top">Apply</a>';
+}
+function drawerNav(){
+  var top = TOP.map(function(t,i){
+    if(t.menu){
+      var subs = t.menu.map(function(m){ return '<a href="'+BASE+m.href+'" target="_top">'+m.label+'</a>'; }).join("");
+      return '<div class="drawer-sec"><button onclick="toggleDrawerSec('+i+')">'+t.label+'</button><div class="drawer-sub" id="dsec'+i+'" style="display:none">'+subs+'</div></div>';
+    }
+    return '<a href="'+BASE+t.href+'" target="_top">'+t.label+'</a>';
+  }).join("");
+  var foot;
+  if(STATE.member){
+    var rows = accountModel(STATE.slug||"me").map(function(a){
+      if(a.divider) return '';
+      if(a.logout) return '<button class="acct-link" style="text-align:left;font-size:1rem" onclick="reqLogout()">Log Out</button>';
+      if(a.lead) return '<a class="drawer-sub" style="padding-left:0" href="'+BASE+a.href+'" target="_top">'+a.lead+'</a>';
+      return '<a class="drawer-sub" style="padding-left:0" href="'+BASE+a.href+'" target="_top">'+a.label+'</a>';
+    }).join("");
+    foot = '<div class="acct-lead">Hello '+(STATE.name||"Member")+'</div>'+rows;
+  } else {
+    foot = '<button class="acct-link" style="text-align:left;color:rgba(252,245,235,.7);font-size:1rem" onclick="reqLogin()">Log In</button>'
+      + '<a class="btn" style="text-align:center" href="'+BASE+'/apply" target="_top">Apply for Membership</a>';
+  }
+  return '<div class="drawer" id="drawer"><div class="drawer-top"><img src="'+WM_BEIGE+'" alt="Aretē"><button class="drawer-x" onclick="closeDrawer()">×</button></div>'
+    + '<nav class="drawer-nav">'+top+'</nav><div class="drawer-foot">'+foot+'</div></div>';
+}
+
+function render(){
+  document.getElementById("nav").innerHTML =
+    '<div class="bar"><a class="brand" href="'+BASE+'/" target="_top"><img src="'+WM_OLIVE+'" alt="Aretē"></a>'
+    + '<nav class="nav">'+navLinks()+'</nav>'
+    + '<div class="actions">'+actions()+'</div>'
+    + '<button class="burger" aria-label="Menu" onclick="openDrawer()"><span></span><span></span></button></div>'
+    + drawerNav();
+  /* preserve full height if the drawer is open during a re-render */
+  sendHeight(document.querySelector(".drawer.open") ? fullHeight() : BASE_H);
+}
+
+/* --- interactions --- */
+function closeAllMenus(){
+  document.querySelectorAll(".item.open").forEach(function(el){ el.classList.remove("open"); });
+  var a = document.getElementById("acct"); if(a) a.classList.remove("open");
+}
+function measureOpen(){
+  // tallest open panel bottom relative to top of iframe → tell parent to grow
+  var max = BASE_H;
+  document.querySelectorAll(".item.open .menu, .acct.open .acct-menu").forEach(function(el){
+    var r = el.getBoundingClientRect();
+    if(r.bottom>max) max = r.bottom;
+  });
+  sendHeight(max + 12);
+}
+function toggleItem(i,e){ e.stopPropagation();
+  var el = document.querySelector('.item[data-i="'+i+'"]');
+  var wasOpen = el.classList.contains("open");
+  closeAllMenus();
+  if(!wasOpen){ el.classList.add("open"); requestAnimationFrame(measureOpen); } else sendHeight(BASE_H);
+}
+function toggleAcct(e){ e.stopPropagation();
+  var a = document.getElementById("acct");
+  var wasOpen = a.classList.contains("open");
+  closeAllMenus();
+  if(!wasOpen){ a.classList.add("open"); requestAnimationFrame(measureOpen); } else sendHeight(BASE_H);
+}
+document.addEventListener("click", function(){ if(document.querySelector(".item.open,.acct.open")){ closeAllMenus(); sendHeight(BASE_H); } });
+/* hover opens dropdowns on desktop */
+document.addEventListener("mouseover", function(e){
+  var item = e.target.closest(".item");
+  if(item && item.querySelector(".menu") && window.innerWidth>1080){
+    if(!item.classList.contains("open")){ closeAllMenus(); item.classList.add("open"); requestAnimationFrame(measureOpen); }
+  }
+});
+document.addEventListener("mouseout", function(e){
+  var from = e.target.closest(".item"); var to = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".item");
+  if(from && from!==to && window.innerWidth>1080){ from.classList.remove("open"); if(!document.querySelector(".item.open,.acct.open")) sendHeight(BASE_H); }
+});
+
+function openDrawer(){
+  document.getElementById("drawer").classList.add("open");
+  document.documentElement.style.overflow = "hidden";   // don't scroll the bar behind the drawer
+  post({ type:"aretenav:drawer", open:true });           // let Wix pin the frame full-screen if it wants
+  sendHeight(fullHeight());                              // grow the iframe to the whole screen
+}
+function closeDrawer(){
+  document.getElementById("drawer").classList.remove("open");
+  document.documentElement.style.overflow = "";
+  post({ type:"aretenav:drawer", open:false });
+  sendHeight(BASE_H);                                    // collapse back to the bar
+}
+function toggleDrawerSec(i){ var s=document.getElementById("dsec"+i); s.style.display = s.style.display==="none"?"block":"none"; }
+
+/* boot */
+render();
+post({ type:"aretenav:ready" });
+window.addEventListener("resize", function(){
+  if(document.querySelector(".drawer.open")) sendHeight(fullHeight());          // keep filling on rotate / address-bar change
+  else if(!document.querySelector(".item.open,.acct.open")) sendHeight(BASE_H);
+});
+window.addEventListener("orientationchange", function(){
+  if(document.querySelector(".drawer.open")) requestAnimationFrame(function(){ sendHeight(fullHeight()); });
+});
+</script>
+</body>
+</html>
