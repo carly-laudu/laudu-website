@@ -17,7 +17,11 @@
     --sans:"Neue Haas Grotesk","Helvetica Neue",Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;background:transparent;-webkit-font-smoothing:antialiased;font-family:var(--sans);}
+  /* The iframe is mounted as a full-height overlay (see masterPage.js) so the
+     dropdowns and the mobile drawer always have room to render. Everything is
+     click-through by default; only the actual nav UI re-enables pointer events,
+     so taps on the empty area fall through to the Wix page underneath. */
+  html,body{margin:0;background:transparent;-webkit-font-smoothing:antialiased;font-family:var(--sans);pointer-events:none;}
   a{text-decoration:none;color:inherit;}
   button{font:inherit;background:none;border:0;cursor:pointer;color:inherit;}
 
@@ -25,7 +29,9 @@
   .bar{display:flex;align-items:center;justify-content:space-between;gap:24px;
     padding:0 clamp(20px,4vw,48px);height:76px;background:rgba(252,245,235,.92);
     backdrop-filter:blur(16px) saturate(1.1);-webkit-backdrop-filter:blur(16px) saturate(1.1);
-    border-bottom:1px solid var(--hair);}
+    border-bottom:1px solid var(--hair);pointer-events:auto;}
+  /* re-enable interaction on the live panels (descendants of .bar already inherit it) */
+  .menu,.acct-menu{pointer-events:auto;}
   .brand{flex:none;display:inline-flex;align-items:center;}
   .brand img{height:21px;}
 
