@@ -1,0 +1,51 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1440, "h": 1240, "title": "Enquiry flow — desktop", "is_interactive": true },
+    { "file": "Mobile.dc.html", "x": 1560, "y": 0, "w": 390, "h": 844, "title": "Enquiry flow — mobile", "is_interactive": true }
+  ],
+  "annotations": [
+    {
+      "id": "brief",
+      "x": 0,
+      "y": -250,
+      "w": 900,
+      "text": "LAUDU enquiry flow\n\nThe contact section today is a mailto: link. That hands the visitor a blank email and no prompt, breaks on webmail and most phones, and delivers unstructured enquiries with no qualifying detail.\n\nThis replaces it with a three-step enquiry form, built in the existing LAUDU system — Dominique Black display, Neue Haas Light body, #E2231A accent, 2px radii, values lifted from assets/colors_and_type.css. Both artboards are clickable: type a bad email, tab out, and the real validation fires."
+    },
+    {
+      "id": "fields",
+      "x": 0,
+      "y": 1390,
+      "w": 440,
+      "text": "Fields — ask only what you need\n\n81% of people abandon forms they start. Three required fields total: name, email, message. Everything else is optional chips.\n\nBudget is optional and carries an explicit \"Rather not say\" — a required budget field on a studio site filters out the good enquiries along with the bad."
+    },
+    {
+      "id": "validation",
+      "x": 480,
+      "y": 1390,
+      "w": 440,
+      "text": "Validation — on blur, not on keystroke\n\nErrors appear when you leave a field, clear the moment you fix them, and never interrupt typing.\n\nContinue is never disabled. A greyed-out button with no explanation is the anti-pattern; instead Continue validates, shows the errors, and moves focus to the first bad field.\n\nEach error carries a warning glyph as well as red, so colour is never the only signal."
+    },
+    {
+      "id": "contrast",
+      "x": 960,
+      "y": 1390,
+      "w": 480,
+      "text": "Contrast — measured, not eyeballed\n\n#E2231A on white = 4.68:1 — passes AA for body text, so the signature red is safe at 16px on the white section.\n\nTwo findings worth carrying back to the live site:\n\n#E2231A on the black footer = 4.23:1 — fails AA for body text (passes for large only).\n\n--fg-faint #A3A3A3 on white = 2.52:1 — fails badly. Fine for hairlines, never for placeholder text. Placeholders here use --fg-subtle #6B6B6B at 5.33:1.\n\nError text uses --laudu-red-deep #B81810 (6.61:1) rather than the signature red, since it sets at 14px."
+    },
+    {
+      "id": "mobile-notes",
+      "x": 1560,
+      "y": 940,
+      "w": 390,
+      "text": "Mobile\n\nPrimary action is full-width and bottom-anchored, in the thumb zone. Inputs are 52px, chips and Back are 44px.\n\nBody text is 16px — below that iOS zooms the page on focus.\n\nNo fake status bar or keyboard drawn: the real ones render on top."
+    },
+    {
+      "id": "departure",
+      "x": 0,
+      "y": 1810,
+      "w": 900,
+      "text": "One place I overrode the skill\n\nux-designer's modal-vs-page decision tree routes \"multi-step workflow, short steps\" to a modal with a stepper. I kept it inline in the section instead.\n\nOn a one-page site the contact section is the destination — the header CTA and #contact both scroll here. Interrupting that arrival with a modal adds a dismissable layer between the visitor and the thing they came for, and modal overuse is on the same skill's anti-pattern list. The stepper gives the chunking without the interruption.\n\nAlso worth flagging: the existing .l-link \"Start a project\" control is 10px text with 14px padding — about 38px tall, under the 44px minimum. Buttons here are 56px."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}
