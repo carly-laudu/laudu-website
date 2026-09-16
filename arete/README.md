@@ -67,6 +67,13 @@ cleared on login and logout.
 
 No new backend method is needed — `getMyProfile()` already returns the row.
 
+`ensureProfile()` builds the slug as `full-name-<first 6 of member._id>`, e.g.
+`alberto-brazzalotto-b44f3f`, and nothing rewrites it afterwards — so it is
+stable even when a member edits their name.
+
+If no URL can be resolved (no row yet), the member is sent to `/my-profile`,
+the edit page, where they can fill their details in.
+
 ## Wix page code
 
 `masterPage.js` here is the site's Velo master page code with the profile

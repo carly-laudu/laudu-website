@@ -15,8 +15,10 @@ const OPEN_CLASS = 'aretenav--open';
 // The one place that knows where a member profile lives.
 // Confirmed against the live site: /profile/<slug>, e.g. /profile/carlydunne.
 const profilePath = (slug) => `/profile/${encodeURIComponent(slug)}`;
-// Exists for every member — used when a member has no slug yet.
-const ACCOUNT_FALLBACK = '/account/my-account';
+// Where a member goes when no public profile URL can be resolved. /my-profile
+// is the edit page, so it is also the right place to send someone whose row
+// does not exist yet — they can fill it in.
+const ACCOUNT_FALLBACK = '/my-profile';
 
 $w.onReady(() => {
   const nav = $w(NAV_ID);
@@ -37,7 +39,7 @@ $w.onReady(() => {
     const onProfile = links.filter((k) => row[k].indexOf('/profile/') === 0);
     if (onProfile.length) return row[onProfile[0]];
     if (links.length) return row[links[0]];
-    const slug = row.slug || row.profileSlug || '';
+    const slug = row.slug || ''; // ensureProfile() writes: full-name-<6 of _id>
     return slug ? profilePath(slug) : '';
   }
 
