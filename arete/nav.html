@@ -125,9 +125,10 @@ var TOP = [
   ]}
 ];
 
-/* Wix Members Area profile route. The slug is per-member, so the link can only
-   be built once the parent page has bridged the logged-in member across. */
-var PROFILE_ROUTE = "/profile/{slug}/profile";
+/* Member profile route, e.g. /profile/carlydunne. The slug is per-member, so the
+   link can only be built once the parent page has bridged the member across.
+   Normally the parent sends a finished profileUrl and this is just the fallback. */
+var PROFILE_ROUTE = "/profile/{slug}";
 /* Where to send a logged-in member whose slug never arrived — the members area
    account page exists for every member, unlike /my-profile, which does not
    exist at all and is what was bouncing people to /apply. */

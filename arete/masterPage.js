@@ -12,9 +12,9 @@ const NAV_ID  = '#html4';
 const BAR_PX  = 76;
 const OPEN_CLASS = 'aretenav--open';
 
-// The one place that knows where a member profile lives. If profiles are a CMS
-// dynamic page rather than the Wix Members Area, change this line only.
-const profilePath = (slug) => `/profile/${encodeURIComponent(slug)}/profile`;
+// The one place that knows where a member profile lives.
+// Confirmed against the live site: /profile/<slug>, e.g. /profile/carlydunne.
+const profilePath = (slug) => `/profile/${encodeURIComponent(slug)}`;
 // Exists for every member — used when a member has no slug yet.
 const ACCOUNT_FALLBACK = '/account/my-account';
 

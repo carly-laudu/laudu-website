@@ -63,20 +63,20 @@ Also: `onLogin` now runs `ensureProfile()` **before** `pushMember()`. Those two
 fired in parallel before, so a brand-new member could get a nav built from a
 profile that did not exist yet — exactly the case that lands on `/apply`.
 
-## Check the profile route — do this first
+## The profile route
 
-`profilePath()` defaults to the Wix Members Area shape,
-`/profile/<slug>/profile`. But this site also has a `backend/profiles.web`
-`ensureProfile()`, which suggests member profiles may be rows in a CMS
-collection behind a **dynamic page** instead — in which case the real route is
-something else entirely (`/the-collective/<slug>`, `/profile/<slug>`, …).
+Confirmed against the live site: member profiles are at **`/profile/<slug>`**,
+e.g. `https://www.areteprivateclient.com/profile/carlydunne`. Note there is no
+trailing `/profile` segment — this is not the stock Wix Members Area shape.
 
-Open one member's profile on the live site and read the URL bar. Then set
-`profilePath()` in `masterPage.js` to match. That single line is the only place
-the route is written down; `nav.html` takes the finished URL from the bridge.
+It is written down in two places, which must stay in step:
 
-(`PROFILE_ROUTE` in `nav.html` is only a fallback for when the parent sends a
-bare `slug` and no `profileUrl` — keep the two in step if you change one.)
+- `masterPage.js` → `profilePath(slug)` — the one that normally runs, since
+  Velo resolves the URL and sends it to the embed as `profileUrl`.
+- `nav.html` → `PROFILE_ROUTE` — the fallback used only if the parent sends a
+  bare `slug` and no `profileUrl`.
+
+If the route ever changes, change both.
 
 ## Still to point somewhere real
 
