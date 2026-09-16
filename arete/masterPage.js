@@ -6,6 +6,7 @@
 
 import { authentication, currentMember } from 'wix-members-frontend';
 import wixLocationFrontend from 'wix-location-frontend';
+import { session } from 'wix-storage-frontend';
 import { ensureProfile, getMyProfile } from 'backend/profiles.web';
 
 const NAV_ID  = '#html4';
@@ -23,6 +24,22 @@ const profilePath = (slug) => PROFILE_PREFIX + encodeURIComponent(slug);
 // is the edit page, so it is also the right place to send someone whose row
 // does not exist yet — they can fill it in.
 const ACCOUNT_FALLBACK = '/my-profile';
+
+// ensureProfile() checks for an existing row and inserts if there is none, so
+// two overlapping calls both see nothing and both insert. Running it on every
+// page load made that likely, and the collection shows the result: members
+// with two or three profile rows sharing one slug, which the dynamic page
+// then cannot resolve. Once per browser session is enough for a safety net.
+const ENSURED_KEY = 'arete:profileEnsured';
+function ensureProfileOnce() {
+  try {
+    if (session.getItem(ENSURED_KEY)) return Promise.resolve();
+    session.setItem(ENSURED_KEY, '1');
+  } catch (e) {
+    // Private browsing can refuse storage; fall through and just run it.
+  }
+  return ensureProfile().catch(() => {});
+}
 
 $w.onReady(() => {
   const nav = $w(NAV_ID);
@@ -143,10 +160,11 @@ $w.onReady(() => {
   // the member is — otherwise a first-time member gets a nav with no slug.
   authentication.onLogin(() => {
     profileUrlMemo = null; // ensureProfile() may have just created the row
-    ensureProfile().catch(() => {}).then(() => pushMember());
+    try { session.removeItem(ENSURED_KEY); } catch (e) {}
+    ensureProfileOnce().then(() => pushMember());
   });
 
   pushMember();
 
-  if (authentication.loggedIn()) { ensureProfile().catch(() => {}); }
+  if (authentication.loggedIn()) { ensureProfileOnce(); }
 });

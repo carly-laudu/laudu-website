@@ -43,6 +43,37 @@ The one message the parent **sends back**:
 }
 ```
 
+## The 404s: stale URLs and duplicate rows
+
+Profiles that `ensureProfile()` created are published at the URL their slug had
+**when the row was inserted** — which was while the member was still called
+"New Member". Renaming them later updated `slug` but not the stored
+`link-profiles-title`:
+
+| fullName | slug | published URL |
+| --- | --- | --- |
+| Belinda Aspinall | `belinda-aspinall-3ee0cc` | `/profile/new-member-3ee0cc` |
+| Hannah Van Ross | `hannah-van-ross-ed4922` | `/profile/new-member-ed4922` |
+
+So the directory links to a URL no row claims any more. Roughly a third of the
+first hundred rows are in this state.
+
+Worse, 14 rows are still literally "New Member", and their slugs are not
+unique: `new-member-357ac1` belongs to three rows, `new-member-657dbd`,
+`new-member-d0eb2b` and `new-member-3d91e5` to two each. A dynamic page cannot
+resolve a slug that matches several items.
+
+### Why there are duplicates
+
+`ensureProfile()` queries for an existing row and inserts when it finds none.
+Two overlapping calls both see nothing and both insert. It was called on every
+page load, so overlaps were easy to come by. `ensureProfileOnce()` in
+`masterPage.js` now runs it at most once per browser session.
+
+That stops new duplicates. The rows already in the collection need a one-off
+repair — see the note in the session this came from; it changes URLs, so it is
+not something to run unasked.
+
 ## Why My Profile URLs look odd
 
 `ensureProfile()` builds the slug as:
