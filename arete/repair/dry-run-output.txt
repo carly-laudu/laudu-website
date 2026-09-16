@@ -1,0 +1,109 @@
+==============================================================================
+DRY RUN — Profiles slug repair.  NOTHING IS WRITTEN.
+==============================================================================
+
+Rows in collection: 193
+  healthy, untouched : 121
+  stale URL          : 58   <- would be changed
+  duplicate slug     : 9   <- reported only, not changed
+  no URL at all      : 5   <- reported only, not changed
+
+
+--- WOULD CHANGE (58) ------------------------------------------
+These publish at a URL their slug no longer matches, so they 404.
+
+  member                        now (broken)                      would become
+  --------------------------------------------------------------------------------------------
+  Fiona Brockhurst              /profile/new-member-c38d11        /profile/fiona-brockhurst
+  Gilead Cooper KC              /profile/new-member-92664e        /profile/gilead-cooper-kc
+  Jennifer Headon               /profile/new-member-759770        /profile/jennifer-headon
+  Hannah Davie                  /profile/new-member-03ef53        /profile/hannah-davie
+  Deborah Carrivick             /profile/new-member-4084a3        /profile/deborah-carrivick
+  Judith Chatoo                 /profile/new-member-942e85        /profile/judith-chatoo
+  Sacha Wooldridge              /profile/new-member-922996        /profile/sacha-wooldridge
+  David Scott                   /profile/new-member-c64f6c        /profile/david-scott
+  Harriet Errington             /profile/new-member-954e31        /profile/harriet-errington
+  Joshua Rubenstein             /profile/new-member-d754a4        /profile/joshua-rubenstein
+  Edward Devenport              /profile/new-member-91141d        /profile/edward-devenport
+  Dr James Gough                /profile/new-member-aeb317        /profile/dr-james-gough
+  Elspeth Talbot Rice KC        /profile/new-member-6d450b        /profile/elspeth-talbot-rice-kc
+  Richard Abrahams              /profile/new-member-c86866        /profile/richard-abrahams
+  Rhiannon Winter Van Ross      /profile/new-member-3688bb        /profile/rhiannon-winter-van-ross
+  Belinda Aspinall              /profile/new-member-3ee0cc        /profile/belinda-aspinall
+  Laura Dadswell                /profile/new-member-38746b        /profile/laura-dadswell
+  Humberto Sanches              /profile/new-member-b939d4        /profile/humberto-sanches
+  Poppy Mitchell                /profile/new-member-30336e        /profile/poppy-mitchell
+  Jen Jensen                    /profile/new-member-5cc594        /profile/jen-jensen
+  Jessica Dunn                  /profile/new-member-29bc6a        /profile/jessica-dunn
+  Rebecca Priestly              /profile/new-member-301d05        /profile/rebecca-priestly
+  Ella Nobay                    /profile/new-member-a53144        /profile/ella-nobay
+  James Price                   /profile/new-member-a220f8        /profile/james-price
+  J-P Pitt                      /profile/new-member-a8d636        /profile/j-p-pitt
+  David Clerey                  /profile/new-member-f6599a        /profile/david-clerey
+  Jeremy Barton                 /profile/new-member-416c88        /profile/jeremy-barton
+  Gemma Willingham              /profile/new-member-9a05b3        /profile/gemma-willingham
+  Emil Infante                  /profile/new-member-2ce298        /profile/emil-infante
+  Hannah Van Ross               /profile/new-member-ed4922        /profile/hannah-van-ross
+  Ken Maxwell                   /profile/new-member-f3b24d        /profile/ken-maxwell
+  Guy Tolhurst                  /profile/new-member-1a5e97        /profile/guy-tolhurst
+  Sara Biglieri                 /profile/new-member-b2af4c        /profile/sara-biglieri
+  Ilaria Romagnoli              /profile/new-member-4a6421        /profile/ilaria-romagnoli
+  Lauren van Der Westhuizen     /profile/new-member-b78a12        /profile/lauren-van-der-westhuizen
+  Jessica Gaffney               /profile/new-member-bfe099        /profile/jessica-gaffney
+  Holly Gwyn-Griffiths          /profile/new-member-7ddf6c        /profile/holly-gwyn-griffiths
+  Gauthier Blanluet             /profile/new-member-562b87        /profile/gauthier-blanluet
+  Katherine Rayden              /profile/new-member-397e35        /profile/katherine-rayden
+  Jenny McKeown                 /profile/new-member-81f189        /profile/jenny-mckeown
+  Joanne Morse                  /profile/new-member-d8a0f9        /profile/joanne-morse
+  Emma Simmons                  /profile/new-member-303a93        /profile/emma-simmons
+  Jonathan Speck                /profile/new-member-81fe75        /profile/jonathan-speck
+  Holly Hill                    /profile/new-member-3187c2        /profile/holly-hill
+  Richard Bagnall-Smith         /profile/new-member-f8e93c        /profile/richard-bagnall-smith
+  Jennifer East                 /profile/new-member-2cdb28        /profile/jennifer-east
+  Jeremy Kosky                  /profile/new-member-0fed6a        /profile/jeremy-kosky
+  Damian Ozenbrook              /profile/new-member-8fe743        /profile/damian-ozenbrook
+  Giovanni Angelini             /profile/new-member-9a6051        /profile/giovanni-angelini
+  Jer O'Mahony                  /profile/new-member-87a3f5        /profile/jer-o-mahony
+  Piers Master                  /profile/new-member-b8a906        /profile/piers-master
+  Zofia Jasnikowska             /profile/new-member-357e07        /profile/zofia-jasnikowska
+  Craig Rowlands                /profile/new-member-59d1ba        /profile/craig-rowlands
+  Robert Brodrick               /profile/new-member-0c5c89        /profile/robert-brodrick
+  Kamala Murugesu               /profile/new-member-360bd8        /profile/kamala-murugesu
+  Esmond Brown                  /profile/new-member-1ec370        /profile/esmond-brown
+  Gabriel York                  /profile/new-member-81a25f        /profile/gabriel-york
+  Emily Bernstein               /profile/new-member-090ccb        /profile/emily-bernstein
+
+
+--- REPORTED ONLY: duplicate slugs (9 rows) ------------------
+Several rows share one slug, so the page cannot resolve it. These look
+like the same member signed up twice. Merging or deleting is your call.
+
+  new-member-357ac1  (3 rows)
+      261f51e3  New Member
+      75b69ee1  New Member
+      cbf42276  New Member
+  new-member-657dbd  (2 rows)
+      33aaba18  New Member
+      badbec8b  New Member
+  new-member-d0eb2b  (2 rows)
+      5dcfa695  New Member
+      e2c4d2db  New Member
+  new-member-3d91e5  (2 rows)
+      d860c7ad  New Member
+      ddf3d92a  New Member
+
+
+--- REPORTED ONLY: no URL (5) ----------------------------------
+No slug and no link, so these have no profile page at all.
+
+  10c28e36  Catherine Grum
+  2493f5b8  Christine Crabtree
+  80744124  Michel Masquelier
+  80aee365  Hannes Arnold
+  b3fca566  Dan Altmann
+
+==============================================================================
+Summary: 58 rows would have their slug rewritten.
+         121 rows untouched — existing links unaffected.
+         Nothing was written. Run again with the apply script to commit.
+==============================================================================
