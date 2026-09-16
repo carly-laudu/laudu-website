@@ -43,6 +43,26 @@ The one message the parent **sends back**:
 }
 ```
 
+## Why My Profile URLs look odd
+
+`ensureProfile()` builds the slug as:
+
+```js
+slug: `${fullName.toLowerCase()...}-${member._id.slice(0, 6)}`
+```
+
+so a profile it creates lands at `/profile/carly-dunne-a839ec`. The six hex
+characters come from the member ID and exist to guarantee uniqueness, but they
+are only needed when two members genuinely share a name.
+
+`uniqueSlug()` in `profiles.web.additions.js` replaces that with a clean slug,
+falling back to `-2`, `-3` only on a real collision. Existing rows keep the
+slugs they have, so no URL changes and no links break.
+
+**Note:** duplicate member accounts produce duplicate profile rows, one per
+member ID, since `ensureProfile()` keys on `memberId`. Which one My Profile
+opens depends on which account is logged in.
+
 ## Eleanor Vane is the embed's sample, not data
 
 The profile card is an HTML embed (`#html5`). It renders a hard-coded sample

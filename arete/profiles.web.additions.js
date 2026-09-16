@@ -39,3 +39,51 @@ export const getProfileBySlug = webMethod(Permissions.SiteMember, async (slug) =
     .find({ suppressAuth: true });
   return all.items.find((item) => slugKey(item.slug) === wanted) || null;
 });
+
+// ============================================================
+// OPTIONAL: tidier slugs for new profiles
+//
+// ensureProfile() currently builds the slug as
+//   `${name}-${member._id.slice(0, 6)}`
+// which is what produces URLs like /profile/carly-dunne-a839ec. The suffix is
+// there to guarantee uniqueness, but it is only actually needed when two
+// members share a name.
+//
+// This drops the suffix unless the clean slug is already taken, giving
+// /profile/carly-dunne, then /profile/carly-dunne-2 for the next Carly Dunne.
+// Replace the slug line in ensureProfile() with `await uniqueSlug(fullName)`.
+//
+// Existing rows keep the slugs they already have — this only affects profiles
+// created from here on.
+// ============================================================
+
+function baseSlug(name) {
+  return (name || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '') || 'member';
+}
+
+async function uniqueSlug(fullName) {
+  const base = baseSlug(fullName);
+
+  // Everything that could collide: the slug itself, or one of its -2, -3 forms.
+  const nearby = await wixData.query('Profiles')
+    .startsWith('slug', base)
+    .limit(100)
+    .find({ suppressAuth: true });
+
+  const taken = new Set(nearby.items.map((item) => (item.slug || '').toLowerCase()));
+  if (!taken.has(base)) return base;
+
+  for (let n = 2; n < 100; n++) {
+    const candidate = `${base}-${n}`;
+    if (!taken.has(candidate)) return candidate;
+  }
+
+  // Pathological case only — fall back to the old behaviour.
+  return `${base}-${Date.now().toString(36).slice(-6)}`;
+}
