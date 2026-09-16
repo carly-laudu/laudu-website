@@ -43,6 +43,29 @@ The one message the parent **sends back**:
 }
 ```
 
+## Known blocker: /profile/ is reserved
+
+The public profile dynamic page is mounted at `profile/{slug}` — the same
+prefix the Wix Members Area router owns. Wix wins that race, so the CMS page is
+never reached: a slug its own router can match renders Wix's built-in member
+template, and one it cannot 404s. Confirmed by pasting a member's exact CMS
+slug into the address bar and still getting the template.
+
+**Fix (Wix editor, not code):** give the dynamic page a URL outside the
+reserved prefix — `member/{slug}`, `collective/{slug}`, anything but
+`profile/...`.
+
+Then, in `masterPage.js`:
+
+```js
+const PROFILE_PAGE_READY = true;                                   // was false
+const profilePath = (slug) => `/member/${encodeURIComponent(slug)}`; // new prefix
+```
+
+Until that happens, `PROFILE_PAGE_READY` is `false` and My Profile goes to
+`/my-profile`, the edit page, which works. `nav.html` needs no change either
+way — Velo sends it the finished URL.
+
 ## Where the profile URL comes from
 
 Two different pages are involved, and they are easy to confuse:

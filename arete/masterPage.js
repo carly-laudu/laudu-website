@@ -12,9 +12,18 @@ const NAV_ID  = '#html4';
 const BAR_PX  = 76;
 const OPEN_CLASS = 'aretenav--open';
 
-// The one place that knows where a member profile lives.
-// Confirmed against the live site and ensureProfile():
-// /profile/<full-name-6ofid>, e.g. /profile/alberto-brazzalotto-b44f3f.
+// INTERIM. /profile/... is reserved by the Wix Members Area router, so a CMS
+// dynamic page mounted there is never reached: Wix serves its own member
+// template instead, or 404s on a slug it cannot match. Until the public profile
+// page has a URL outside that prefix, send members to their own edit page.
+//
+// To switch back: give the dynamic page a URL such as /member/{slug}, set
+// profilePath() to match, and flip this to true. Nothing else changes, and
+// nav.html does not need re-pasting.
+const PROFILE_PAGE_READY = false;
+const MY_PROFILE = '/my-profile';
+
+// Where the public profile will live once it is off the reserved prefix.
 const profilePath = (slug) => `/profile/${encodeURIComponent(slug)}`;
 // Where a member goes when no public profile URL can be resolved. /my-profile
 // is the edit page, so it is also the right place to send someone whose row
@@ -46,6 +55,7 @@ $w.onReady(() => {
 
   let profileUrlMemo = null;
   async function profileUrl() {
+    if (!PROFILE_PAGE_READY) return MY_PROFILE;
     if (profileUrlMemo !== null) return profileUrlMemo;
     try {
       profileUrlMemo = rowProfileUrl(await getMyProfile());
