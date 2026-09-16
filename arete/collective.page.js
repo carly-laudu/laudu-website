@@ -7,13 +7,14 @@
 // getDirectory() returns the real URL, as both `href` and `slug`, so the
 // embed links correctly whether or not its own code is updated.
 //
-// >>> Set EMBED_ID to the directory embed's ID (Properties panel). <<<
+// The directory embed is #html5 on this page. The profile card on
+// Profiles (Item) is also #html5 — IDs are per page, so that is not a clash.
 // ============================================================
 
 import { getDirectory } from 'backend/profiles.web';
 import wixLocationFrontend from 'wix-location-frontend';
 
-const EMBED_ID = '#html6';
+const EMBED_ID = '#html5';
 
 $w.onReady(async () => {
   let embed = null;
