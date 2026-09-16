@@ -43,38 +43,39 @@ The one message the parent **sends back**:
 }
 ```
 
-## The profile page is driven by code, not its dataset
+## Eleanor Vane is the embed's sample, not data
 
-The `Profiles (Item)` page showed the same member — "Eleanor Vane" — for every
-URL. She is not a real member, and the profile card is not made of Wix elements
-at all: it is an **HTML embed** (`#html5`) with her details written into the
-markup. An embed cannot be connected to a dataset, so no amount of dataset work
-would ever have changed what it displayed. Confirmed in the editor, where the
-item switcher read "Alasdair-Davidson 2/183" while the canvas rendered Eleanor
-Vane.
+The profile card is an HTML embed (`#html5`). It renders a hard-coded sample
+member if no message reaches it within 1200ms:
 
-The page therefore feeds the embed over `postMessage`, the same pattern the nav
-uses:
+```js
+setTimeout(function () {
+  if (received) return;
+  renderProfile({ name: 'Eleanor Vane', ... });
+}, 1200);
+```
 
-- `profiles.web.additions.js` adds `getProfileBySlug()` to
-  `backend/profiles.web.js`.
-- `profiles-item.page.js` is the page code: it reads the slug from the address
-  bar, resolves everything the embed needs (including converting
-  `wix:image://` values into URLs an iframe can load, and the document field
-  into a download URL) and posts `areteprofile:member` into `#html5`.
-- The embed must listen for that message and render it. It should post
-  `areteprofile:ready` when it is listening, since the iframe can come up after
-  the page code has run.
+Nothing was posting to it, so every profile URL fell through to that sample.
+She is not in the `Profiles` collection at all — confirmed by querying it.
+Seeing her on a live profile means this bridge is not running.
 
-### The slugs do not match their own URLs
+`profiles-item.page.js` looks the member up by the slug in the URL and posts
+them in, on the embed's own protocol:
 
-The stored slug and the URL Wix builds from it disagree — `Laura-Ucrós` in the
-CMS becomes `-laura-ucrós` in the address bar (lowercased, accent kept, leading
-hyphen added). `slugKey()` reduces both sides to `lauraucros` by stripping
-accents, case and every separator, so the row is found either way.
+| Message | Direction |
+| --- | --- |
+| `areteportal:ready` | embed to page — the page replies with the data |
+| `areteportal:data` | page to embed — `{ profile: {...} }` |
+| `areteportal:nav` | embed to page — the back button |
+| `areteportal:height` | embed to page — iframe resize |
 
-This is deliberate: it avoids rewriting slug data, which would change every
-profile URL and break the ~184 existing links.
+The profile keys must match what the embed's `renderProfile()` reads: `name`,
+`titleLine`, `photo`, `bio`, `region`, `firm`, `memberSince`, `linkedin`,
+`areasOfFocus`, `documentUrl`, `documentLabel`, `events` — not the collection's
+own field names.
+
+The page listens *before* awaiting the lookup, since the embed posts `ready` as
+soon as it loads, which is usually before the backend call returns.
 
 ## Where the profile URL comes from
 

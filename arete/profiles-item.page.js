@@ -1,18 +1,26 @@
 // ============================================================
 // ARETĒ — Profiles (Item) page code  ·  /profile/{slug}
 //
-// The profile card is an HTML embed (#html5), not Wix elements, so it cannot
-// be connected to a dataset. This fetches the member by the slug in the URL
-// and posts the data into the iframe, the same way masterPage.js feeds the nav.
+// The profile card is an HTML embed (#html5), so it cannot be bound to a
+// dataset. This looks the member up by the slug in the URL and posts the data
+// into the iframe.
 //
-// The embed must listen for 'areteprofile:member' and render it, and should
-// post 'areteprofile:ready' once it is listening.
+// Protocol, matching the embed exactly:
+//   iframe -> page : { type:'areteportal:ready' }
+//   page -> iframe : { type:'areteportal:data', profile:{...} }
+//   iframe -> page : { type:'areteportal:nav', href:'/the-collective' }
+//   iframe -> page : { type:'areteportal:height', px:number }
+//
+// If nothing is posted within 1200ms the embed renders its built-in sample
+// member (Eleanor Vane) — so seeing her on a live profile means this bridge
+// is not running.
 // ============================================================
 
-import { getProfileBySlug, getDocumentUrl } from 'backend/profiles.web';
+import { getProfileBySlug, getDocumentUrl, getMemberEvents } from 'backend/profiles.web';
 import wixLocationFrontend from 'wix-location-frontend';
 
 const EMBED_ID = '#html5';
+const COLLECTIVE_PATH = '/the-collective';
 
 // Last non-empty path segment, e.g. /profile/-laura-ucros -> "-laura-ucros".
 // The backend normalises it, so the mangled form Wix generates still matches.
@@ -26,7 +34,7 @@ function slugFromUrl() {
   return '';
 }
 
-// wix:image://v1/ab12_cd~mv2.jpg/file.jpg#... -> a URL an iframe can load.
+// wix:image://v1/ab12_cd~mv2.jpg/file.jpg#... -> a URL the iframe can load.
 // The embed is a separate origin and cannot resolve Wix's internal scheme.
 function imageUrl(value) {
   if (!value) return '';
@@ -36,15 +44,6 @@ function imageUrl(value) {
   return match ? 'https://static.wixstatic.com/media/' + match[1] : '';
 }
 
-function initialsOf(name) {
-  return (name || '')
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join('');
-}
-
 function formatMonthYear(value) {
   if (!value) return '';
   const date = new Date(value);
@@ -52,39 +51,37 @@ function formatMonthYear(value) {
   return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
-// Everything the embed needs, already resolved — no Wix-internal values.
-async function buildPayload(profile) {
-  const fullName = profile.fullName || profile.title || '';
+// Keys here must match what the embed's renderProfile() reads.
+async function buildProfile(profile) {
+  const name = profile.fullName || profile.title || '';
 
   let documentUrl = '';
   if (profile.document) {
-    try {
-      documentUrl = await getDocumentUrl(profile.document);
-    } catch (e) {
-      documentUrl = '';
-    }
+    try { documentUrl = await getDocumentUrl(profile.document); } catch (e) { documentUrl = ''; }
   }
 
-  const focus = Array.isArray(profile.areasOfFocus)
+  let events = [];
+  if (profile.memberId) {
+    try { events = (await getMemberEvents(profile.memberId)) || []; } catch (e) { events = []; }
+  }
+
+  const areasOfFocus = Array.isArray(profile.areasOfFocus)
     ? profile.areasOfFocus.filter(Boolean)
     : (profile.areasOfFocus ? [profile.areasOfFocus] : []);
 
   return {
-    type: 'areteprofile:member',
-    profile: {
-      fullName,
-      initials: initialsOf(fullName),
-      profession: profile.profession || '',
-      region: profile.region || '',
-      firm: profile.firm || '',
-      bio: profile.bio || '',
-      subtitle: [profile.profession, profile.firm].filter(Boolean).join(' · '),
-      memberSince: formatMonthYear(profile.memberSince),
-      areasOfFocus: focus,
-      photo: imageUrl(profile.photo),
-      linkedin: profile.linkedin || '',
-      document: documentUrl
-    }
+    name,
+    titleLine: [profile.profession, profile.firm].filter(Boolean).join(' · '),
+    photo: imageUrl(profile.photo),
+    bio: profile.bio || '',
+    region: profile.region || '',
+    firm: profile.firm || '',
+    memberSince: formatMonthYear(profile.memberSince),
+    linkedin: profile.linkedin || '',
+    areasOfFocus,
+    documentUrl,
+    documentLabel: 'Practice overview',
+    events
   };
 }
 
@@ -97,6 +94,27 @@ $w.onReady(async () => {
     return;
   }
 
+  let payload = null;
+
+  function send() {
+    if (payload) embed.postMessage(payload);
+  }
+
+  // Listen before the lookup: the embed posts 'ready' as soon as it loads,
+  // which is usually before the backend call returns.
+  embed.onMessage((event) => {
+    const data = (event && event.data) || {};
+    if (data.type === 'areteportal:ready') { send(); return; }
+    if (data.type === 'areteportal:nav') {
+      const href = data.href === 'BACK_TO_COLLECTIVE' ? COLLECTIVE_PATH : data.href;
+      if (href) wixLocationFrontend.to(href);
+      return;
+    }
+    if (data.type === 'areteportal:height') {
+      try { embed.style.height = `${Math.ceil(Number(data.px) || 0)}px`; } catch (e) {}
+    }
+  });
+
   const slug = slugFromUrl();
   let profile = null;
   try {
@@ -107,17 +125,9 @@ $w.onReady(async () => {
 
   if (!profile) {
     console.log('profile page: no profile for slug', slug);
-    embed.postMessage({ type: 'areteprofile:member', profile: null });
     return;
   }
 
-  const payload = await buildPayload(profile);
-
-  // The iframe may come up after this code runs, so answer its ready message
-  // as well as posting once now.
-  embed.onMessage((event) => {
-    const data = (event && event.data) || {};
-    if (data.type === 'areteprofile:ready') embed.postMessage(payload);
-  });
-  embed.postMessage(payload);
+  payload = { type: 'areteportal:data', profile: await buildProfile(profile) };
+  send();
 });
