@@ -45,57 +45,38 @@ The one message the parent **sends back**:
 
 ## Wix page code
 
-`slug` must be sent or the profile link cannot be built. In the site's
-**masterPage.js** (so it runs on every page):
+`masterPage.js` in this folder is the site's Velo master page code, merged and
+ready to paste over the existing one (Dev Mode → Page Code → masterPage.js).
+It keeps the overlay diagnostics, the login/logout wiring and the
+`ensureProfile()` safety net as they were. Three things changed:
 
-```js
-import { currentMember, authentication } from 'wix-members-frontend';
-import wixLocationFrontend from 'wix-location-frontend';
+- **`profilePath(slug)`** — one constant at the top that owns where a member
+  profile lives. Velo knows the site's routing; the embed should not have to
+  guess it.
+- **`profileUrl` in the member payload** — the embed already received `slug`,
+  it just never used it. Now it is handed a finished URL as well.
+- **An `aretenav:profile` branch** — the safety net for a member the embed was
+  handed no slug for; it re-reads the member and routes, falling back to
+  `/account/my-account`.
 
-const nav = $w('#html4'); // the HTML embed holding nav.html
+Also: `onLogin` now runs `ensureProfile()` **before** `pushMember()`. Those two
+fired in parallel before, so a brand-new member could get a nav built from a
+profile that did not exist yet — exactly the case that lands on `/apply`.
 
-async function sendMember() {
-  try {
-    const member = await currentMember.getMember();
-    nav.postMessage({
-      type: 'aretenav:member',
-      loggedIn: true,
-      name: member.contactDetails?.firstName || member.profile?.nickname || 'Member',
-      slug: member.profile?.slug || ''
-    });
-  } catch (e) {
-    nav.postMessage({ type: 'aretenav:member', loggedIn: false });
-  }
-}
+## Check the profile route — do this first
 
-$w.onReady(() => {
-  nav.onMessage(async (event) => {
-    const msg = event.data || {};
-    if (msg.type === 'aretenav:ready')  return sendMember();
-    // Keep whatever resize line masterPage.js already used for this embed —
-    // how an HTML component is resized differs between Wix Editor and Studio.
-    if (msg.type === 'aretenav:height') return;
-    if (msg.type === 'aretenav:nav')    return wixLocationFrontend.to(msg.href);
-    if (msg.type === 'aretenav:login')  return authentication.promptLogin({ mode: 'login' }).then(sendMember);
-    if (msg.type === 'aretenav:logout') return authentication.logout();
-    if (msg.type === 'aretenav:profile') {
-      const member = await currentMember.getMember();
-      const slug = member?.profile?.slug;
-      return wixLocationFrontend.to(slug ? `/profile/${slug}/profile` : '/account/my-account');
-    }
-  });
-});
-```
+`profilePath()` defaults to the Wix Members Area shape,
+`/profile/<slug>/profile`. But this site also has a `backend/profiles.web`
+`ensureProfile()`, which suggests member profiles may be rows in a CMS
+collection behind a **dynamic page** instead — in which case the real route is
+something else entirely (`/the-collective/<slug>`, `/profile/<slug>`, …).
 
-`authentication.onLogin(sendMember)` is worth adding too, so the bar swaps to
-the account menu without a page reload.
+Open one member's profile on the live site and read the URL bar. Then set
+`profilePath()` in `masterPage.js` to match. That single line is the only place
+the route is written down; `nav.html` takes the finished URL from the bridge.
 
-## Check the profile route
-
-Open any member's profile on the live site and look at the URL. If the members
-area is on a custom route (for example `/members/<slug>/profile`), change
-`PROFILE_ROUTE` at the top of the script in `nav.html` to match — it is a
-single constant, `"/profile/{slug}/profile"`, with `{slug}` substituted in.
+(`PROFILE_ROUTE` in `nav.html` is only a fallback for when the parent sends a
+bare `slug` and no `profileUrl` — keep the two in step if you change one.)
 
 ## Still to point somewhere real
 
