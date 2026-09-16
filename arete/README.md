@@ -45,12 +45,14 @@ The one message the parent **sends back**:
 
 ## The profile page is driven by code, not its dataset
 
-The `Profiles (Item)` page's dynamic dataset does not bind to the URL: opening
-any member's URL — including the one Wix itself generates for the row — returns
-the same profile (the newest row). Confirmed by logging
-`$w('#dynamicDataset').getCurrentItem()` on a known member's URL.
+The `Profiles (Item)` page showed the same member — "Eleanor Vane" — for every
+URL. She is not a real member: the section's name, subtitle, Overview
+paragraph, firm, member-since and focus tags were hand-typed design content,
+connected to nothing. Confirmed in the editor, where the item switcher read
+"Alasdair-Davidson 2/183" while the canvas rendered Eleanor Vane.
 
-Rather than keep debugging dataset state, the page is populated in code:
+So no amount of dataset work would have helped — the elements were never bound.
+The page is populated in code instead:
 
 - `profiles.web.additions.js` adds `getProfileBySlug()` to
   `backend/profiles.web.js`.
