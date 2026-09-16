@@ -43,24 +43,29 @@ The one message the parent **sends back**:
 }
 ```
 
-## Where the slug comes from
+## Where the profile URL comes from
 
-The `/profile/<slug>` dynamic page is keyed on a slug held in the **CMS**, not
-on Wix's `member.profile.slug`. Those are two different values for the same
-person, and using the wrong one lands on the empty default profile template —
-which looks like a broken page rather than a broken link.
+Two different pages are involved, and they are easy to confuse:
 
-So the slug is read from the collection:
+| Page | What it is |
+| --- | --- |
+| `/my-profile` | The **edit** form — the member fills in their own details. |
+| `/profile/<slug>` | The **public** profile, a dynamic page off the CMS collection. |
 
-1. `profiles.web.additions.js` adds `getMyProfileSlug()` to
-   `backend/profiles.web.js`, next to the existing `ensureProfile()`. Three
-   constants at the top must be set to the real collection and field names.
-2. `masterPage.js` calls it, builds `/profile/<slug>`, and sends the finished
-   URL to the embed as `profileUrl`.
+"My Profile" in the nav points at the public one.
 
-**Order matters.** Add the backend function *before* pasting `masterPage.js` —
-it imports `getMyProfileSlug`, and a Velo import of an export that does not
-exist yet breaks the whole master page, nav and login included.
+Its slug lives in the CMS, not in Wix's `member.profile.slug` — two different
+values for the same person, and the Wix one lands on the empty default profile
+template, which reads as a broken page rather than a broken link.
+
+`masterPage.js` therefore resolves the URL from the member's own CMS row via
+the existing `getMyProfile()`, preferring the `link-*` field Wix generates for
+a dynamic item page (its value is the finished relative URL, so it stays correct
+even if the page's URL pattern changes) and falling back to building
+`/profile/<slug>` from a slug field. The result is memoised per page load and
+cleared on login and logout.
+
+No new backend method is needed — `getMyProfile()` already returns the row.
 
 ## Wix page code
 

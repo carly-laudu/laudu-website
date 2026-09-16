@@ -6,7 +6,7 @@
 
 import { authentication, currentMember } from 'wix-members-frontend';
 import wixLocationFrontend from 'wix-location-frontend';
-import { ensureProfile, getMyProfileSlug } from 'backend/profiles.web';
+import { ensureProfile, getMyProfile } from 'backend/profiles.web';
 
 const NAV_ID  = '#html4';
 const BAR_PX  = 76;
@@ -22,15 +22,34 @@ $w.onReady(() => {
   const nav = $w(NAV_ID);
   const navExists = nav && typeof nav.onMessage === 'function';
 
-  // The /profile/<slug> dynamic page is keyed on the slug held in the CMS.
-  // member.profile.slug is Wix's own, separate value — using it lands on the
-  // empty default profile template.
-  async function profileSlug() {
+  // The /profile/<slug> dynamic page is keyed on the slug held in the CMS, not
+  // on Wix's member.profile.slug — those are different values for the same
+  // person, and the Wix one lands on the empty default profile template.
+  //
+  // Wix generates a link-* field on the collection whose value is the finished
+  // relative URL of the dynamic item page, so prefer that over rebuilding the
+  // path: it stays correct even if the page's URL pattern changes.
+  function rowProfileUrl(row) {
+    if (!row) return '';
+    const keys = Object.keys(row);
+    const links = keys.filter((k) => k.indexOf('link-') === 0 &&
+      typeof row[k] === 'string' && row[k].charAt(0) === '/');
+    const onProfile = links.filter((k) => row[k].indexOf('/profile/') === 0);
+    if (onProfile.length) return row[onProfile[0]];
+    if (links.length) return row[links[0]];
+    const slug = row.slug || row.profileSlug || '';
+    return slug ? profilePath(slug) : '';
+  }
+
+  let profileUrlMemo = null;
+  async function profileUrl() {
+    if (profileUrlMemo !== null) return profileUrlMemo;
     try {
-      return (await getMyProfileSlug()) || '';
+      profileUrlMemo = rowProfileUrl(await getMyProfile());
     } catch (e) {
-      return '';
+      profileUrlMemo = '';
     }
+    return profileUrlMemo;
   }
 
   async function pushMember() {
@@ -43,14 +62,14 @@ $w.onReady(() => {
           (m && m.contactDetails && m.contactDetails.firstName) ||
           (m && m.profile && m.profile.nickname) ||
           'Member';
-        const slug = await profileSlug();
+        const slug = (m && m.profile && m.profile.slug) || '';
         payload = {
           type: 'aretenav:member',
           loggedIn: true,
           name,
           slug,
           // Resolved here so the embed never has to guess the site's routing.
-          profileUrl: slug ? profilePath(slug) : ''
+          profileUrl: await profileUrl()
         };
       }
     } catch (e) {
@@ -103,19 +122,20 @@ $w.onReady(() => {
         // (e.g. a brand-new member whose profile was still being created).
         case 'aretenav:profile':
           setOverlay(false);
-          profileSlug()
-            .then((slug) => wixLocationFrontend.to(slug ? profilePath(slug) : ACCOUNT_FALLBACK))
+          profileUrl()
+            .then((url) => wixLocationFrontend.to(url || ACCOUNT_FALLBACK))
             .catch(() => wixLocationFrontend.to(ACCOUNT_FALLBACK));
           break;
       }
     });
   }
 
-  authentication.onLogout(() => pushMember());
+  authentication.onLogout(() => { profileUrlMemo = null; pushMember(); });
 
   // On login, let the profile finish being created before telling the nav who
   // the member is — otherwise a first-time member gets a nav with no slug.
   authentication.onLogin(() => {
+    profileUrlMemo = null; // ensureProfile() may have just created the row
     ensureProfile().catch(() => {}).then(() => pushMember());
   });
 
