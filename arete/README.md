@@ -43,36 +43,38 @@ The one message the parent **sends back**:
 }
 ```
 
-## The 404s: stale URLs and duplicate rows
+## The 404s: the directory built its own URLs
 
-Profiles that `ensureProfile()` created are published at the URL their slug had
-**when the row was inserted** — which was while the member was still called
-"New Member". Renaming them later updated `slug` but not the stored
-`link-profiles-title`:
+A row's `slug` and the URL it is published at are separate fields, and they
+disagree for roughly 58 members. Wix keeps the real URL in `link-profiles-title`;
+`slug` is not the routing key at all:
 
-| fullName | slug | published URL |
+| member | slug | published URL |
 | --- | --- | --- |
-| Belinda Aspinall | `belinda-aspinall-3ee0cc` | `/profile/new-member-3ee0cc` |
 | Hannah Van Ross | `hannah-van-ross-ed4922` | `/profile/new-member-ed4922` |
+| Fiona Brockhurst | `fiona-brockhurst-c38d11` | `/profile/fiona-brockhurst` |
+| Eleanor Morgan | `Eleanor-Morgan` | `/profile/eleanor-morgan` |
 
-So the directory links to a URL no row claims any more. Roughly a third of the
-first hundred rows are in this state.
+The directory embed built its links from the slug:
 
-Worse, 14 rows are still literally "New Member", and their slugs are not
-unique: `new-member-357ac1` belongs to three rows, `new-member-657dbd`,
-`new-member-d0eb2b` and `new-member-3d91e5` to two each. A dynamic page cannot
-resolve a slug that matches several items.
+```js
+post({ type: 'areteportal:nav', href: '/profile/' + el.getAttribute('data-slug') });
+```
 
-### Why there are duplicates
+so it sent members to URLs no page is served at. `getDirectory()` now returns
+the published URL as both `href` and `slug`, which fixes the links without the
+embed needing to change, and without rewriting a single row.
 
-`ensureProfile()` queries for an existing row and inserts when it finds none.
-Two overlapping calls both see nothing and both insert. It was called on every
-page load, so overlaps were easy to come by. `ensureProfileOnce()` in
-`masterPage.js` now runs it at most once per browser session.
+Rows with no link field are skipped rather than linked to a URL that cannot
+resolve.
 
-That stops new duplicates. The rows already in the collection need a one-off
-repair — see the note in the session this came from; it changes URLs, so it is
-not something to run unasked.
+### Why the rows drifted
+
+`ensureProfile()` inserts the row while the member is often still called
+"New Member", and the URL is fixed at that moment. Renaming later updates
+`slug` only. On top of that, it checks for an existing row and then inserts, so
+two overlapping calls both insert — `ensureProfileOnce()` in `masterPage.js`
+now runs it at most once per browser session, which stops new duplicates.
 
 ## Why My Profile URLs look odd
 

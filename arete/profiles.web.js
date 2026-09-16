@@ -151,6 +151,52 @@ export const getProfileBySlug = webMethod(Permissions.SiteMember, async (slug) =
   return all.items.find((item) => linkKeys(item).indexOf(wanted) !== -1) || null;
 });
 
+// Every member for the directory. Each carries the URL it is actually
+// reachable at, taken from the link-* field Wix maintains — never rebuilt from
+// `slug`, which frequently disagrees with it.
+export const getDirectory = webMethod(Permissions.SiteMember, async () => {
+  const res = await wixData.query('Profiles')
+    .eq('visibleInDirectory', true)
+    .limit(1000)
+    .find({ suppressAuth: true });
+
+  return res.items
+    .map((item) => {
+      const href = rowHref(item);
+      if (!href) return null; // no URL, so nothing to link to
+      return {
+        name: (item.fullName || item.title || '').trim(),
+        titleLine: [item.profession, item.firm].filter(Boolean).join(' \u00b7 '),
+        photo: imageUrl(item.photo),
+        profession: item.profession || '',
+        region: item.region || '',
+        href,
+        slug: href.replace(/^\/profile\//, '') // for embeds that still build /profile/<slug>
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.name.localeCompare(b.name));
+});
+
+// The URL a row is published at.
+function rowHref(item) {
+  const link = Object.keys(item)
+    .filter((f) => f.indexOf('link-') === 0)
+    .map((f) => item[f])
+    .find((v) => typeof v === 'string' && v.charAt(0) === '/');
+  if (link) return link;
+  return item.slug ? `/profile/${item.slug}` : '';
+}
+
+// wix:image://v1/ab12~mv2.jpg/file.jpg#... -> a URL an iframe can load.
+function imageUrl(value) {
+  if (!value) return '';
+  const raw = String(value);
+  if (raw.indexOf('http') === 0) return raw;
+  const match = raw.match(/^wix:image:\/\/v1\/([^/]+)/);
+  return match ? 'https://static.wixstatic.com/media/' + match[1] : '';
+}
+
 // Update my own profile
 export const updateMyProfile = webMethod(Permissions.SiteMember, async (updates) => {
   const member = await currentMember.getMember();
