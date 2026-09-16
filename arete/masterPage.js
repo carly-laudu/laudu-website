@@ -13,7 +13,8 @@ const BAR_PX  = 76;
 const OPEN_CLASS = 'aretenav--open';
 
 // The one place that knows where a member profile lives.
-// Confirmed against the live site: /profile/<slug>, e.g. /profile/carlydunne.
+// Confirmed against the live site and ensureProfile():
+// /profile/<full-name-6ofid>, e.g. /profile/alberto-brazzalotto-b44f3f.
 const profilePath = (slug) => `/profile/${encodeURIComponent(slug)}`;
 // Where a member goes when no public profile URL can be resolved. /my-profile
 // is the edit page, so it is also the right place to send someone whose row
