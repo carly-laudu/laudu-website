@@ -52,7 +52,7 @@ The one message the parent **sends back**:
 import { currentMember, authentication } from 'wix-members-frontend';
 import wixLocationFrontend from 'wix-location-frontend';
 
-const nav = $w('#navEmbed'); // the HTML embed holding nav.html
+const nav = $w('#html4'); // the HTML embed holding nav.html
 
 async function sendMember() {
   try {
@@ -72,7 +72,9 @@ $w.onReady(() => {
   nav.onMessage(async (event) => {
     const msg = event.data || {};
     if (msg.type === 'aretenav:ready')  return sendMember();
-    if (msg.type === 'aretenav:height') return nav.style.height = `${msg.px}px`;
+    // Keep whatever resize line masterPage.js already used for this embed —
+    // how an HTML component is resized differs between Wix Editor and Studio.
+    if (msg.type === 'aretenav:height') return;
     if (msg.type === 'aretenav:nav')    return wixLocationFrontend.to(msg.href);
     if (msg.type === 'aretenav:login')  return authentication.promptLogin({ mode: 'login' }).then(sendMember);
     if (msg.type === 'aretenav:logout') return authentication.logout();
