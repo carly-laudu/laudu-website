@@ -125,22 +125,25 @@ var TOP = [
   ]}
 ];
 
-/* The member's own area. Wix resolves it against whoever is logged in, so it is
-   a fixed path — unlike the public per-member profiles at /profile/<slug>.
-   The old /my-profile was not a route at all, which is what bounced members
-   to /apply. */
-var MEMBERS_AREA = "/members-area";
+/* Member profile route, e.g. /profile/carlydunne. The slug is per-member, so the
+   link can only be built once the parent page has bridged the member across.
+   Normally the parent sends a finished profileUrl and this is just the fallback. */
+var PROFILE_ROUTE = "/profile/{slug}";
+/* Where to send a logged-in member whose slug never arrived — the members area
+   account page exists for every member, unlike /my-profile, which does not
+   exist at all and is what was bouncing people to /apply. */
+var ACCOUNT_FALLBACK = "/account/my-account";
 
 function accountModel(){
   return [
-    { label:"My Profile", href:MEMBERS_AREA },
+    { label:"My Profile", href:profileHref(), profile:true },
     { label:"The Members", href:"/the-collective" }, /* swap to /the-collective at launch */
     { label:"Events", href:"/event-list" },
     { label:"Log Out", logout:true }
   ];
 }
 
-var STATE = { member:false, name:"", slug:"", bridged:false };
+var STATE = { member:false, name:"", slug:"", profileUrl:"", bridged:false };
 var BASE_H = 76;
 var SUB_H = 55;
 var openKey = null;
@@ -148,7 +151,7 @@ var openKey = null;
 function post(m){ try{ if(window.parent && window.parent!==window) window.parent.postMessage(m,"*"); }catch(e){} }
 window.addEventListener("message", function(e){
   var d = e.data; if(!d||typeof d!=="object") return;
-  if(d.type==="aretenav:member"){ STATE.bridged=true; STATE.member=!!d.loggedIn; STATE.name=d.name||""; STATE.slug=d.slug||""; openKey=null; render(); }
+  if(d.type==="aretenav:member"){ STATE.bridged=true; STATE.member=!!d.loggedIn; STATE.name=d.name||""; STATE.slug=d.slug||""; STATE.profileUrl=d.profileUrl||""; openKey=null; render(); }
 });
 function reqLogin(){ if(STATE.bridged) post({type:"aretenav:login"}); }
 function reqLogout(){ if(STATE.bridged) post({type:"aretenav:logout"}); else { STATE.member=false; render(); } }
@@ -157,6 +160,22 @@ function go(href){
   if(!href) return;
   post({ type:"aretenav:nav", href:href });
   if(window.parent === window){ location.href = href; }
+}
+/* The member's own profile lives at a slug-specific URL, so it is resolved at
+   click time rather than baked into the menu markup. */
+function profileHref(){
+  if(STATE.profileUrl) return STATE.profileUrl;
+  if(STATE.slug) return PROFILE_ROUTE.replace("{slug}", encodeURIComponent(STATE.slug));
+  return "";
+}
+function goProfile(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  var href = profileHref();
+  if(href){ go(href); openKey=null; updateSub(); closeDrawer(); return; }
+  /* No slug yet: ask the parent to look the current member up and route there. */
+  if(STATE.bridged) post({ type:"aretenav:profile" });
+  else go(ACCOUNT_FALLBACK);
+  openKey=null; updateSub(); closeDrawer();
 }
 document.addEventListener("click", function(e){
   var a = e.target.closest('a[href]');
@@ -188,6 +207,7 @@ function subContent(key){
   if(key==="acct"){
     return accountModel().map(function(a){
       if(a.logout) return '<button onclick="reqLogout()">Log Out</button>';
+      if(a.profile && !a.href) return '<button onclick="goProfile(event)">'+a.label+'</button>';
       return '<a href="'+BASE+a.href+'" target="_top">'+a.label+'</a>';
     }).join("");
   }
@@ -227,6 +247,7 @@ function drawerNav(){
   if(STATE.member){
     var rows = accountModel().map(function(a){
       if(a.logout) return '<button class="acct-link" style="text-align:left;font-size:1rem" onclick="reqLogout()">Log Out</button>';
+      if(a.profile && !a.href) return '<button class="acct-link" style="text-align:left;font-size:.95rem;color:rgba(252,245,235,.6)" onclick="goProfile(event)">'+a.label+'</button>';
       return '<a class="drawer-sub" style="padding-left:0" href="'+BASE+a.href+'" target="_top">'+a.label+'</a>';
     }).join("");
     foot = '<div class="acct-lead">Hello '+(STATE.name||"Member")+'</div>'+rows;
