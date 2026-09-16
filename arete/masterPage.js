@@ -12,16 +12,12 @@ const NAV_ID  = '#html4';
 const BAR_PX  = 76;
 const OPEN_CLASS = 'aretenav--open';
 
-// The public profile dynamic page: member/{slug}. It was previously mounted at
-// profile/{slug}, which the Wix Members Area router owns — Wix intercepted
-// every request and served its own member template, or 404'd. Keep this off
-// the reserved /profile/ prefix.
+// The public profile dynamic page: profile/{slug}.
+// Set PROFILE_PAGE_READY to false to send members to the edit page instead,
+// without touching anything else.
 const PROFILE_PAGE_READY = true;
 const MY_PROFILE = '/my-profile';
-const PROFILE_PREFIX = '/member/';
-// Owned by the Wix Members Area router — a link field still holding one of
-// these (cached from before the rename) must never be followed.
-const RESERVED_PREFIX = '/profile/';
+const PROFILE_PREFIX = '/profile/';
 const profilePath = (slug) => PROFILE_PREFIX + encodeURIComponent(slug);
 // Where a member goes when no public profile URL can be resolved. /my-profile
 // is the edit page, so it is also the right place to send someone whose row
@@ -46,8 +42,7 @@ $w.onReady(() => {
       typeof row[k] === 'string' && row[k].charAt(0) === '/');
     const onProfile = links.filter((k) => row[k].indexOf(PROFILE_PREFIX) === 0);
     if (onProfile.length) return row[onProfile[0]];
-    const usable = links.filter((k) => row[k].indexOf(RESERVED_PREFIX) !== 0);
-    if (usable.length) return row[usable[0]];
+    if (links.length) return row[links[0]];
     const slug = row.slug || ''; // ensureProfile() writes: full-name-<6 of _id>
     return slug ? profilePath(slug) : '';
   }

@@ -43,20 +43,27 @@ The one message the parent **sends back**:
 }
 ```
 
-## Never mount the profile page under /profile/
+## Open question: why the profile page renders empty
 
-The public profile dynamic page is at **`member/{slug}`**.
+The public profile dynamic page is at **`profile/{slug}`** and stays there —
+there are ~184 existing links to it.
 
-It was originally at `profile/{slug}` — the prefix the Wix Members Area router
-owns. Wix won that race, so the CMS page was never reached: a slug its own
-router could match rendered Wix's built-in member template, and one it could
-not 404'd. Requesting a member's exact CMS slug and still getting the template
-is what proved it.
+Requesting a member's exact CMS slug returns Wix's default-looking profile
+template rather than the member's details. Two candidate causes, and this has
+not been narrowed down yet:
 
-Anything under `/profile/...` will be intercepted the same way, so keep the
-dynamic page off that prefix. `RESERVED_PREFIX` in `masterPage.js` also stops
-the code from following a CMS `link-*` field that still holds an old
-`/profile/` URL cached from before the rename.
+1. **The dataset filter.** `ensureProfile()` creates every row with
+   `visibleInDirectory: false`, and `updateMyProfile()` only flips it true once
+   photo, profession, region *and* bio are all filled in. If the dynamic page's
+   dataset filters on that field, every incomplete profile renders with no item
+   bound — which looks exactly like an unstyled template.
+   **Test:** set one member's `visibleInDirectory` to `true` in the CMS and
+   reload their URL. If it renders, this is the cause.
+2. **Router precedence.** The Wix Members Area also serves URLs under
+   `/profile/`. This was assumed to be the cause earlier; it is not confirmed,
+   and moving the page was rejected because of the existing links.
+
+Neither is a nav problem — the link itself resolves and navigates correctly.
 
 ## Where the profile URL comes from
 

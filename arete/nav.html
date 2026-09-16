@@ -125,12 +125,11 @@ var TOP = [
   ]}
 ];
 
-/* The public profile dynamic page, e.g. /member/alberto-brazzalotto-b44f3f.
+/* The public profile dynamic page, e.g. /profile/alberto-brazzalotto-b44f3f.
    ensureProfile() writes the slug as full-name-<first 6 of member._id>. Normally
    Velo resolves the whole URL and sends it as profileUrl; this is the fallback
-   for when only a bare slug is bridged across. Must stay off Wix's reserved
-   /profile/ prefix, which the Members Area router intercepts. */
-var PROFILE_ROUTE = "/member/{slug}";
+   for when only a bare slug is bridged across. */
+var PROFILE_ROUTE = "/profile/{slug}";
 /* Where a member goes when no profile URL can be resolved: /my-profile is the
    edit page, so someone without a profile row can go and fill one in. */
 var ACCOUNT_FALLBACK = "/my-profile";
