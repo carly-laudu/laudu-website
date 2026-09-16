@@ -43,28 +43,20 @@ The one message the parent **sends back**:
 }
 ```
 
-## Known blocker: /profile/ is reserved
+## Never mount the profile page under /profile/
 
-The public profile dynamic page is mounted at `profile/{slug}` — the same
-prefix the Wix Members Area router owns. Wix wins that race, so the CMS page is
-never reached: a slug its own router can match renders Wix's built-in member
-template, and one it cannot 404s. Confirmed by pasting a member's exact CMS
-slug into the address bar and still getting the template.
+The public profile dynamic page is at **`member/{slug}`**.
 
-**Fix (Wix editor, not code):** give the dynamic page a URL outside the
-reserved prefix — `member/{slug}`, `collective/{slug}`, anything but
-`profile/...`.
+It was originally at `profile/{slug}` — the prefix the Wix Members Area router
+owns. Wix won that race, so the CMS page was never reached: a slug its own
+router could match rendered Wix's built-in member template, and one it could
+not 404'd. Requesting a member's exact CMS slug and still getting the template
+is what proved it.
 
-Then, in `masterPage.js`:
-
-```js
-const PROFILE_PAGE_READY = true;                                   // was false
-const profilePath = (slug) => `/member/${encodeURIComponent(slug)}`; // new prefix
-```
-
-Until that happens, `PROFILE_PAGE_READY` is `false` and My Profile goes to
-`/my-profile`, the edit page, which works. `nav.html` needs no change either
-way — Velo sends it the finished URL.
+Anything under `/profile/...` will be intercepted the same way, so keep the
+dynamic page off that prefix. `RESERVED_PREFIX` in `masterPage.js` also stops
+the code from following a CMS `link-*` field that still holds an old
+`/profile/` URL cached from before the rename.
 
 ## Where the profile URL comes from
 

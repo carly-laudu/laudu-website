@@ -12,19 +12,17 @@ const NAV_ID  = '#html4';
 const BAR_PX  = 76;
 const OPEN_CLASS = 'aretenav--open';
 
-// INTERIM. /profile/... is reserved by the Wix Members Area router, so a CMS
-// dynamic page mounted there is never reached: Wix serves its own member
-// template instead, or 404s on a slug it cannot match. Until the public profile
-// page has a URL outside that prefix, send members to their own edit page.
-//
-// To switch back: give the dynamic page a URL such as /member/{slug}, set
-// profilePath() to match, and flip this to true. Nothing else changes, and
-// nav.html does not need re-pasting.
-const PROFILE_PAGE_READY = false;
+// The public profile dynamic page: member/{slug}. It was previously mounted at
+// profile/{slug}, which the Wix Members Area router owns — Wix intercepted
+// every request and served its own member template, or 404'd. Keep this off
+// the reserved /profile/ prefix.
+const PROFILE_PAGE_READY = true;
 const MY_PROFILE = '/my-profile';
-
-// Where the public profile will live once it is off the reserved prefix.
-const profilePath = (slug) => `/profile/${encodeURIComponent(slug)}`;
+const PROFILE_PREFIX = '/member/';
+// Owned by the Wix Members Area router — a link field still holding one of
+// these (cached from before the rename) must never be followed.
+const RESERVED_PREFIX = '/profile/';
+const profilePath = (slug) => PROFILE_PREFIX + encodeURIComponent(slug);
 // Where a member goes when no public profile URL can be resolved. /my-profile
 // is the edit page, so it is also the right place to send someone whose row
 // does not exist yet — they can fill it in.
@@ -34,7 +32,7 @@ $w.onReady(() => {
   const nav = $w(NAV_ID);
   const navExists = nav && typeof nav.onMessage === 'function';
 
-  // The /profile/<slug> dynamic page is keyed on the slug held in the CMS, not
+  // The dynamic page is keyed on the slug held in the CMS, not
   // on Wix's member.profile.slug — those are different values for the same
   // person, and the Wix one lands on the empty default profile template.
   //
@@ -46,9 +44,10 @@ $w.onReady(() => {
     const keys = Object.keys(row);
     const links = keys.filter((k) => k.indexOf('link-') === 0 &&
       typeof row[k] === 'string' && row[k].charAt(0) === '/');
-    const onProfile = links.filter((k) => row[k].indexOf('/profile/') === 0);
+    const onProfile = links.filter((k) => row[k].indexOf(PROFILE_PREFIX) === 0);
     if (onProfile.length) return row[onProfile[0]];
-    if (links.length) return row[links[0]];
+    const usable = links.filter((k) => row[k].indexOf(RESERVED_PREFIX) !== 0);
+    if (usable.length) return row[usable[0]];
     const slug = row.slug || ''; // ensureProfile() writes: full-name-<6 of _id>
     return slug ? profilePath(slug) : '';
   }
