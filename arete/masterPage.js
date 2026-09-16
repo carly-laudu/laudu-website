@@ -25,12 +25,16 @@ $w.onReady(() => {
   async function memberSlug() {
     try {
       const m = await currentMember.getMember({ fieldsets: ['FULL'] });
-      return (m && m.profile && m.profile.slug) || (m && m._id) || '';
+      return (m && m.profile && m.profile.slug) || '';
     } catch (e) {
       return '';
     }
   }
 
+  // Wix generates the profile slug itself (e.g. alberto-brazzalotto-b44f3f).
+  // A member _id is a UUID and is NOT a valid /profile/<slug> segment — it
+  // renders the default profile template rather than the member, so an absent
+  // slug must fall through to the safety net instead of building a bad URL.
   async function pushMember() {
     if (!navExists) return;
     let payload = { type: 'aretenav:member', loggedIn: false, name: '', slug: '', profileUrl: '' };
@@ -41,7 +45,7 @@ $w.onReady(() => {
           (m && m.contactDetails && m.contactDetails.firstName) ||
           (m && m.profile && m.profile.nickname) ||
           'Member';
-        const slug = (m && m.profile && m.profile.slug) || (m && m._id) || '';
+        const slug = (m && m.profile && m.profile.slug) || '';
         payload = {
           type: 'aretenav:member',
           loggedIn: true,
