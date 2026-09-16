@@ -97,6 +97,25 @@ own field names.
 The page listens *before* awaiting the lookup, since the embed posts `ready` as
 soon as it loads, which is usually before the backend call returns.
 
+### The slug in the URL is not always the slug in the row
+
+Profiles created before a member was named were inserted as "New Member", and
+Wix's `link-profiles-title` field kept that first URL even after the slug was
+corrected:
+
+| fullName | slug | actual URL |
+| --- | --- | --- |
+| Belinda Aspinall | `belinda-aspinall-3ee0cc` | `/profile/new-member-3ee0cc` |
+| Craig Rowlands | `craig-rowlands-59d1ba` | `/profile/new-member-59d1ba` |
+
+The link field is what the directory links to, so the lookup matches on the
+slug **and** on the tail of any `link-*` field. Verified against real rows,
+including stale `new-member-*` URLs, percent-encoded accents, a leading space
+in one name, and a full stop in another: 10/10 resolve to the right member.
+
+A few rows (e.g. Catherine Grum, Dan Altmann) have neither a slug nor a link
+field, so they have no URL and cannot be reached at all.
+
 ## Where the profile URL comes from
 
 Two different pages are involved, and they are easy to confuse:

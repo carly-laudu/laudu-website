@@ -19,25 +19,48 @@ function slugKey(value) {
     .replace(/[^a-z0-9]+/g, '');
 }
 
+// The URL segment a row is actually reachable at. Wix stores it in a link-*
+// field, and it can disagree with the slug: profiles created before a member
+// was named keep /profile/new-member-3ee0cc while their slug has since become
+// belinda-aspinall-3ee0cc. The link field is what the directory links to, so
+// both have to be matchable.
+function linkKeys(item) {
+  const keys = [];
+  if (item.slug) keys.push(slugKey(item.slug));
+  Object.keys(item).forEach((field) => {
+    if (field.indexOf('link-') !== 0) return;
+    const value = item[field];
+    if (typeof value !== 'string' || !value) return;
+    const tail = value.split('/').filter(Boolean).pop();
+    if (!tail) return;
+    let decoded = tail;
+    try { decoded = decodeURIComponent(tail); } catch (e) { /* keep raw */ }
+    keys.push(slugKey(decoded));
+  });
+  return keys;
+}
+
 // Look a profile up by the slug in the page URL.
 // Members-only, matching the collection's own permissions.
 export const getProfileBySlug = webMethod(Permissions.SiteMember, async (slug) => {
   const wanted = slugKey(slug);
   if (!wanted) return null;
 
-  // Exact match first — cheap, and correct for rows ensureProfile() created.
+  // Exact match first — cheap, and correct for rows whose slug is current.
   const exact = await wixData.query('Profiles')
     .eq('slug', slug)
     .limit(1)
     .find({ suppressAuth: true });
   if (exact.items.length) return exact.items[0];
 
-  // Otherwise compare normalised. The collection is small enough (~200 rows)
-  // that scanning it is cheaper than trying to express this as a query.
+  // Otherwise compare normalised, against the slug and the link field alike.
+  // The collection is small enough (~200 rows) that scanning it is cheaper
+  // than trying to express this as a query.
   const all = await wixData.query('Profiles')
     .limit(1000)
     .find({ suppressAuth: true });
-  return all.items.find((item) => slugKey(item.slug) === wanted) || null;
+
+  return all.items.find((item) => linkKeys(item).indexOf(wanted) !== -1) || null;
 });
 
 // ============================================================
