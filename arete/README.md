@@ -43,6 +43,42 @@ The one message the parent **sends back**:
 }
 ```
 
+## Approval: an account is not a membership
+
+`Permissions.SiteMember` only means "has an account". If site signup is open,
+anyone can create one — and every method returning member data was gated on
+exactly that, so a stranger could have read all 193 profiles, bios and
+documents.
+
+**The signup policy in Wix is the primary control** (Dashboard → Settings →
+Members & signup policy → approval required). No code here substitutes for it.
+
+The code gate is defence in depth. A caller is approved when a `Profiles` row
+carries their memberId, or a row's `email` matches their login email. Creating
+that row is the approval; it happens in the CMS, not by signing up.
+
+- `ensureProfile()` now **claims** a prepared row rather than creating one for
+  any account. This also stops imported members getting a duplicate row on
+  first login, which is how Sarah Williams ended up with two.
+- The one exception is an application whose status is in
+  `APPROVED_APPLICATION_STATUSES` — that keeps apply → approve → join working.
+  Check the real status values before relying on it; the only one seen so far
+  is `NEW`.
+- `getDirectory()`, `getProfileBySlug()`, `getMyProfile()` and
+  `updateMyProfile()` all resolve the caller through the same check.
+
+### Rollout
+
+`REQUIRE_APPROVED` is **false**. Turning it on before `Profiles.email` is
+populated locks out every member whose row is unclaimed.
+
+1. Add an `email` field to `Profiles` and populate it for the 193 rows.
+2. Spot-check that members resolve (`getMyProfile()` returns their row).
+3. Set `REQUIRE_APPROVED = true`.
+
+Until step 3, the Wix signup policy is the only thing standing between a
+stranger and the directory.
+
 ## The 404s: the directory built its own URLs
 
 A row's `slug` and the URL it is published at are separate fields, and they

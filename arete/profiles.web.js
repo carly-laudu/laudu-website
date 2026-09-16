@@ -8,6 +8,69 @@ import wixData from 'wix-data';
 
 const EDITABLE_FIELDS = ['fullName', 'profession', 'region', 'firm', 'bio', 'photo', 'linkedin', 'areasOfFocus', 'document'];
 
+// ---------- approval ----------
+//
+// Permissions.SiteMember only means "has an account". On an approval-only site
+// that is not the same as "is a member", so every method that returns member
+// data checks this instead.
+//
+// A caller is approved when a Profiles row already carries their memberId, or
+// when a row's `email` matches their login email. Creating that row IS the
+// approval: no row, no access.
+//
+// LEAVE THIS FALSE until Profiles.email is populated — turning it on with the
+// field empty locks out every member whose row has not been claimed yet.
+// Until it is true, the Wix signup policy is the only thing preventing a
+// stranger from reading member data.
+const REQUIRE_APPROVED = false;
+
+// An application in one of these states may create a profile on first login.
+// Check the real values in the application collection before relying on it.
+const APPROVED_APPLICATION_STATUSES = ['APPROVED', 'ACCEPTED', 'MEMBER'];
+
+const normEmail = (value) => (value || '').toString().trim().toLowerCase();
+
+async function loginEmailOf(member) {
+  if (member && member.loginEmail) return normEmail(member.loginEmail);
+  // getMember() does not always carry loginEmail; fall back to the member table.
+  try {
+    const res = await wixData.query('Members/PrivateMembersData')
+      .eq('_id', member._id)
+      .limit(1)
+      .find({ suppressAuth: true });
+    return normEmail(res.items[0] && res.items[0].loginEmail);
+  } catch (e) {
+    return '';
+  }
+}
+
+// The caller's profile row, by memberId or by email. Null means not approved.
+async function approvedProfile() {
+  const member = await currentMember.getMember({ fieldsets: ['FULL'] });
+  if (!member || !member._id) return null;
+
+  const claimed = await wixData.query('Profiles')
+    .eq('memberId', member._id)
+    .limit(1)
+    .find({ suppressAuth: true });
+  if (claimed.items.length) return claimed.items[0];
+
+  const email = await loginEmailOf(member);
+  if (!email) return null;
+
+  const byEmail = await wixData.query('Profiles')
+    .eq('email', email)
+    .limit(1)
+    .find({ suppressAuth: true });
+  return byEmail.items[0] || null;
+}
+
+async function requireApproved() {
+  if (!REQUIRE_APPROVED) return;
+  const profile = await approvedProfile();
+  if (!profile) throw new Error('Not an approved member');
+}
+
 async function findApplication(email) {
   if (!email) return null;
   const res = await wixData.query('application')
@@ -84,53 +147,81 @@ function linkKeys(item) {
 
 // ---------- profiles ----------
 
-// Safety net and primary path: creates a pre-filled profile at first login
+// First login: claim the profile row that was created for this member when
+// they were approved. It does NOT create a row for an unrecognised email —
+// creating the row is how someone becomes a member, and that happens in the
+// CMS, not by signing up.
+//
+// The one exception is an approved application, which keeps the
+// apply -> approve -> join pipeline working without a manual row.
 export const ensureProfile = webMethod(Permissions.SiteMember, async () => {
   const member = await currentMember.getMember({ fieldsets: ['FULL'] });
-  if (!member) return;
+  if (!member || !member._id) return { claimed: false };
 
-  const existing = await wixData.query('Profiles')
+  // Already claimed.
+  const claimed = await wixData.query('Profiles')
     .eq('memberId', member._id)
+    .limit(1)
     .find({ suppressAuth: true });
-  if (existing.items.length > 0) return;
+  if (claimed.items.length) return { claimed: true };
 
-  const application = await findApplication(member.loginEmail);
+  const email = await loginEmailOf(member);
+  if (!email) return { claimed: false };
 
-  // Only a real name earns a readable slug. Without one the member ID keeps
-  // the slug unique, since every unnamed member would otherwise collide.
-  const knownName = application?.fullName
+  // A row was prepared for this email: attach this member to it.
+  const byEmail = await wixData.query('Profiles')
+    .eq('email', email)
+    .limit(1)
+    .find({ suppressAuth: true });
+
+  if (byEmail.items.length) {
+    const profile = byEmail.items[0];
+    profile.memberId = member._id;
+    if (!profile.fullName) {
+      profile.fullName = [member.contactDetails?.firstName, member.contactDetails?.lastName]
+        .filter(Boolean).join(' ') || profile.title || 'Member';
+    }
+    await wixData.update('Profiles', profile, { suppressAuth: true });
+    return { claimed: true };
+  }
+
+  // No row, but an approved application — create one.
+  const application = await findApplication(email);
+  const status = (application && application.status ? application.status : '').toUpperCase();
+  if (!application || APPROVED_APPLICATION_STATUSES.indexOf(status) === -1) {
+    console.log('ensureProfile: no profile and no approved application for this member');
+    return { claimed: false };
+  }
+
+  const fullName = application.fullName
     || [member.contactDetails?.firstName, member.contactDetails?.lastName].filter(Boolean).join(' ')
-    || '';
-
-  const fullName = knownName || 'New Member';
-  const slug = knownName
-    ? await uniqueSlug(knownName)
-    : `member-${member._id.slice(0, 6)}`;
+    || 'New Member';
 
   await wixData.insert('Profiles', {
     memberId: member._id,
+    email,
     fullName,
-    profession: application?.profession || '',
-    region: application?.region || '',
-    firm: application?.firm || '',
-    linkedin: application?.linkedin || '',
+    profession: application.profession || '',
+    region: application.region || '',
+    firm: application.firm || '',
+    linkedin: application.linkedin || '',
     memberSince: new Date(),
     visibleInDirectory: false,
-    slug
+    slug: await uniqueSlug(fullName)
   }, { suppressAuth: true });
+
+  return { claimed: true };
 });
 
 // Get my own profile (for the edit page)
 export const getMyProfile = webMethod(Permissions.SiteMember, async () => {
-  const member = await currentMember.getMember();
-  const res = await wixData.query('Profiles')
-    .eq('memberId', member._id)
-    .find({ suppressAuth: true });
-  return res.items[0] || null;
+  return approvedProfile();
 });
 
 // Look a profile up by the slug in the page URL, for the public profile page.
 export const getProfileBySlug = webMethod(Permissions.SiteMember, async (slug) => {
+  await requireApproved();
+
   const wanted = slugKey(slug);
   if (!wanted) return null;
 
@@ -155,6 +246,8 @@ export const getProfileBySlug = webMethod(Permissions.SiteMember, async (slug) =
 // reachable at, taken from the link-* field Wix maintains — never rebuilt from
 // `slug`, which frequently disagrees with it.
 export const getDirectory = webMethod(Permissions.SiteMember, async () => {
+  await requireApproved();
+
   const res = await wixData.query('Profiles')
     .eq('visibleInDirectory', true)
     .limit(1000)
@@ -199,11 +292,7 @@ function imageUrl(value) {
 
 // Update my own profile
 export const updateMyProfile = webMethod(Permissions.SiteMember, async (updates) => {
-  const member = await currentMember.getMember();
-  const res = await wixData.query('Profiles')
-    .eq('memberId', member._id)
-    .find({ suppressAuth: true });
-  const profile = res.items[0];
+  const profile = await approvedProfile();
   if (!profile) throw new Error('No profile found');
 
   for (const key of EDITABLE_FIELDS) {
