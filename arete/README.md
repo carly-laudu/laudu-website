@@ -43,27 +43,29 @@ The one message the parent **sends back**:
 }
 ```
 
-## Open question: why the profile page renders empty
+## The profile page is driven by code, not its dataset
 
-The public profile dynamic page is at **`profile/{slug}`** and stays there —
-there are ~184 existing links to it.
+The `Profiles (Item)` page's dynamic dataset does not bind to the URL: opening
+any member's URL — including the one Wix itself generates for the row — returns
+the same profile (the newest row). Confirmed by logging
+`$w('#dynamicDataset').getCurrentItem()` on a known member's URL.
 
-Requesting a member's exact CMS slug returns Wix's default-looking profile
-template rather than the member's details. Two candidate causes, and this has
-not been narrowed down yet:
+Rather than keep debugging dataset state, the page is populated in code:
 
-1. **The dataset filter.** `ensureProfile()` creates every row with
-   `visibleInDirectory: false`, and `updateMyProfile()` only flips it true once
-   photo, profession, region *and* bio are all filled in. If the dynamic page's
-   dataset filters on that field, every incomplete profile renders with no item
-   bound — which looks exactly like an unstyled template.
-   **Test:** set one member's `visibleInDirectory` to `true` in the CMS and
-   reload their URL. If it renders, this is the cause.
-2. **Router precedence.** The Wix Members Area also serves URLs under
-   `/profile/`. This was assumed to be the cause earlier; it is not confirmed,
-   and moving the page was rejected because of the existing links.
+- `profiles.web.additions.js` adds `getProfileBySlug()` to
+  `backend/profiles.web.js`.
+- `profiles-item.page.js` is the page code: it reads the slug from the address
+  bar and fills the elements in.
 
-Neither is a nav problem — the link itself resolves and navigates correctly.
+### The slugs do not match their own URLs
+
+The stored slug and the URL Wix builds from it disagree — `Laura-Ucrós` in the
+CMS becomes `-laura-ucrós` in the address bar (lowercased, accent kept, leading
+hyphen added). `slugKey()` reduces both sides to `lauraucros` by stripping
+accents, case and every separator, so the row is found either way.
+
+This is deliberate: it avoids rewriting slug data, which would change every
+profile URL and break the ~184 existing links.
 
 ## Where the profile URL comes from
 
