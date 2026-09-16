@@ -6,7 +6,7 @@
 
 import { authentication, currentMember } from 'wix-members-frontend';
 import wixLocationFrontend from 'wix-location-frontend';
-import { ensureProfile } from 'backend/profiles.web';
+import { ensureProfile, getMyProfileSlug } from 'backend/profiles.web';
 
 const NAV_ID  = '#html4';
 const BAR_PX  = 76;
@@ -22,19 +22,17 @@ $w.onReady(() => {
   const nav = $w(NAV_ID);
   const navExists = nav && typeof nav.onMessage === 'function';
 
-  async function memberSlug() {
+  // The /profile/<slug> dynamic page is keyed on the slug held in the CMS.
+  // member.profile.slug is Wix's own, separate value — using it lands on the
+  // empty default profile template.
+  async function profileSlug() {
     try {
-      const m = await currentMember.getMember({ fieldsets: ['FULL'] });
-      return (m && m.profile && m.profile.slug) || '';
+      return (await getMyProfileSlug()) || '';
     } catch (e) {
       return '';
     }
   }
 
-  // Wix generates the profile slug itself (e.g. alberto-brazzalotto-b44f3f).
-  // A member _id is a UUID and is NOT a valid /profile/<slug> segment — it
-  // renders the default profile template rather than the member, so an absent
-  // slug must fall through to the safety net instead of building a bad URL.
   async function pushMember() {
     if (!navExists) return;
     let payload = { type: 'aretenav:member', loggedIn: false, name: '', slug: '', profileUrl: '' };
@@ -45,7 +43,7 @@ $w.onReady(() => {
           (m && m.contactDetails && m.contactDetails.firstName) ||
           (m && m.profile && m.profile.nickname) ||
           'Member';
-        const slug = (m && m.profile && m.profile.slug) || '';
+        const slug = await profileSlug();
         payload = {
           type: 'aretenav:member',
           loggedIn: true,
@@ -105,7 +103,7 @@ $w.onReady(() => {
         // (e.g. a brand-new member whose profile was still being created).
         case 'aretenav:profile':
           setOverlay(false);
-          memberSlug()
+          profileSlug()
             .then((slug) => wixLocationFrontend.to(slug ? profilePath(slug) : ACCOUNT_FALLBACK))
             .catch(() => wixLocationFrontend.to(ACCOUNT_FALLBACK));
           break;
