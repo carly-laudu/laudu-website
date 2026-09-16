@@ -12,28 +12,13 @@ const NAV_ID  = '#html4';
 const BAR_PX  = 76;
 const OPEN_CLASS = 'aretenav--open';
 
-// The one place that knows where a member profile lives.
-// Confirmed against the live site: /profile/<slug>, e.g. /profile/carlydunne.
-const profilePath = (slug) => `/profile/${encodeURIComponent(slug)}`;
-// Exists for every member — used when a member has no slug yet.
-const ACCOUNT_FALLBACK = '/account/my-account';
-
 $w.onReady(() => {
   const nav = $w(NAV_ID);
   const navExists = nav && typeof nav.onMessage === 'function';
 
-  async function memberSlug() {
-    try {
-      const m = await currentMember.getMember({ fieldsets: ['FULL'] });
-      return (m && m.profile && m.profile.slug) || (m && m._id) || '';
-    } catch (e) {
-      return '';
-    }
-  }
-
   async function pushMember() {
     if (!navExists) return;
-    let payload = { type: 'aretenav:member', loggedIn: false, name: '', slug: '', profileUrl: '' };
+    let payload = { type: 'aretenav:member', loggedIn: false, name: '', slug: '' };
     try {
       if (authentication.loggedIn()) {
         const m = await currentMember.getMember({ fieldsets: ['FULL'] });
@@ -42,17 +27,10 @@ $w.onReady(() => {
           (m && m.profile && m.profile.nickname) ||
           'Member';
         const slug = (m && m.profile && m.profile.slug) || (m && m._id) || '';
-        payload = {
-          type: 'aretenav:member',
-          loggedIn: true,
-          name,
-          slug,
-          // Resolved here so the embed never has to guess the site's routing.
-          profileUrl: slug ? profilePath(slug) : ''
-        };
+        payload = { type: 'aretenav:member', loggedIn: true, name, slug };
       }
     } catch (e) {
-      payload = { type: 'aretenav:member', loggedIn: true, name: 'Member', slug: '', profileUrl: '' };
+      payload = { type: 'aretenav:member', loggedIn: true, name: 'Member', slug: '' };
     }
     try { nav.postMessage(payload); } catch (e) {}
   }
@@ -97,14 +75,6 @@ $w.onReady(() => {
             wixLocationFrontend.to(d.href);
           }
           break;
-        // Safety net: the embed asks for the profile when it was handed no slug
-        // (e.g. a brand-new member whose profile was still being created).
-        case 'aretenav:profile':
-          setOverlay(false);
-          memberSlug()
-            .then((slug) => wixLocationFrontend.to(slug ? profilePath(slug) : ACCOUNT_FALLBACK))
-            .catch(() => wixLocationFrontend.to(ACCOUNT_FALLBACK));
-          break;
       }
     });
   }
@@ -112,7 +82,8 @@ $w.onReady(() => {
   authentication.onLogout(() => pushMember());
 
   // On login, let the profile finish being created before telling the nav who
-  // the member is — otherwise a first-time member gets a nav with no slug.
+  // the member is, so a first-time member never reaches the members area
+  // before the row backing it exists.
   authentication.onLogin(() => {
     ensureProfile().catch(() => {}).then(() => pushMember());
   });
