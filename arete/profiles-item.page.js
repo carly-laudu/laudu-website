@@ -1,84 +1,20 @@
 // ============================================================
 // ARETĒ — Profiles (Item) page code  ·  /profile/{slug}
 //
-// Populates the profile from the CMS row directly, rather than relying on the
-// page's dynamic dataset. The dataset was returning the same member for every
-// URL, so the item is fetched by the slug in the address bar instead.
+// The profile card is an HTML embed (#html5), not Wix elements, so it cannot
+// be connected to a dataset. This fetches the member by the slug in the URL
+// and posts the data into the iframe, the same way masterPage.js feeds the nav.
 //
-// >>> Fill in IDS below from the editor's Layers panel. <<<
-// Any ID left wrong is skipped rather than throwing, so the rest of the page
-// still fills in — check the browser console to see which were not found.
+// The embed must listen for 'areteprofile:member' and render it, and should
+// post 'areteprofile:ready' once it is listening.
 // ============================================================
 
-import { getProfileBySlug } from 'backend/profiles.web';
+import { getProfileBySlug, getDocumentUrl } from 'backend/profiles.web';
 import wixLocationFrontend from 'wix-location-frontend';
 
-const IDS = {
-  name:         '#name',          // "Eleanor Vane"
-  subtitle:     '#subtitle',      // "Private Client Law · Vane & Partners"
-  initials:     '#initials',      // the "EV" circle
-  profession:   '#profession',
-  region:       '#region',
-  firm:         '#firm',
-  bio:          '#bio',           // the Overview paragraph
-  memberSince:  '#memberSince',   // "July 2026"
-  areasOfFocus: '#areasOfFocus',  // the tag row, if it is a single text element
-  photo:        '#photo',
-  linkedin:     '#linkedinButton',
-  document:     '#documentButton'
-};
+const EMBED_ID = '#html5';
 
-// $w() throws for an ID that is not on the page, so every lookup is guarded.
-function el(id) {
-  if (!id) return null;
-  try {
-    const found = $w(id);
-    return found && found.id ? found : null;
-  } catch (e) {
-    console.log('profile page: no element', id);
-    return null;
-  }
-}
-
-function hide(element) {
-  if (!element) return;
-  if (typeof element.collapse === 'function') element.collapse();
-  else if (typeof element.hide === 'function') element.hide();
-}
-
-function show(element) {
-  if (!element) return;
-  if (typeof element.expand === 'function') element.expand();
-  if (typeof element.show === 'function') element.show();
-}
-
-function setText(id, value) {
-  const element = el(id);
-  if (!element) return;
-  const text = value === null || value === undefined ? '' : String(value);
-  if (!text) { hide(element); return; }
-  element.text = text;
-  show(element);
-}
-
-function setImage(id, url) {
-  const element = el(id);
-  if (!element) return;
-  if (!url) { hide(element); return; }
-  element.src = url;
-  show(element);
-}
-
-function setLink(id, url) {
-  const element = el(id);
-  if (!element) return;
-  if (!url) { hide(element); return; }
-  element.link = url;
-  element.target = '_blank';
-  show(element);
-}
-
-// Last non-empty segment of the path, e.g. /profile/-laura-ucros -> "-laura-ucros".
+// Last non-empty path segment, e.g. /profile/-laura-ucros -> "-laura-ucros".
 // The backend normalises it, so the mangled form Wix generates still matches.
 function slugFromUrl() {
   const path = wixLocationFrontend.path || [];
@@ -90,7 +26,16 @@ function slugFromUrl() {
   return '';
 }
 
-// "Eleanor Vane" -> "EV", for the avatar circle when a member has no photo.
+// wix:image://v1/ab12_cd~mv2.jpg/file.jpg#... -> a URL an iframe can load.
+// The embed is a separate origin and cannot resolve Wix's internal scheme.
+function imageUrl(value) {
+  if (!value) return '';
+  const raw = String(value);
+  if (raw.indexOf('http') === 0) return raw;
+  const match = raw.match(/^wix:image:\/\/v1\/([^/]+)/);
+  return match ? 'https://static.wixstatic.com/media/' + match[1] : '';
+}
+
 function initialsOf(name) {
   return (name || '')
     .split(/\s+/)
@@ -107,10 +52,53 @@ function formatMonthYear(value) {
   return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
+// Everything the embed needs, already resolved — no Wix-internal values.
+async function buildPayload(profile) {
+  const fullName = profile.fullName || profile.title || '';
+
+  let documentUrl = '';
+  if (profile.document) {
+    try {
+      documentUrl = await getDocumentUrl(profile.document);
+    } catch (e) {
+      documentUrl = '';
+    }
+  }
+
+  const focus = Array.isArray(profile.areasOfFocus)
+    ? profile.areasOfFocus.filter(Boolean)
+    : (profile.areasOfFocus ? [profile.areasOfFocus] : []);
+
+  return {
+    type: 'areteprofile:member',
+    profile: {
+      fullName,
+      initials: initialsOf(fullName),
+      profession: profile.profession || '',
+      region: profile.region || '',
+      firm: profile.firm || '',
+      bio: profile.bio || '',
+      subtitle: [profile.profession, profile.firm].filter(Boolean).join(' · '),
+      memberSince: formatMonthYear(profile.memberSince),
+      areasOfFocus: focus,
+      photo: imageUrl(profile.photo),
+      linkedin: profile.linkedin || '',
+      document: documentUrl
+    }
+  };
+}
+
 $w.onReady(async () => {
+  let embed = null;
+  try {
+    embed = $w(EMBED_ID);
+  } catch (e) {
+    console.log('profile page: no embed at', EMBED_ID);
+    return;
+  }
+
   const slug = slugFromUrl();
   let profile = null;
-
   try {
     profile = await getProfileBySlug(slug);
   } catch (e) {
@@ -119,30 +107,17 @@ $w.onReady(async () => {
 
   if (!profile) {
     console.log('profile page: no profile for slug', slug);
+    embed.postMessage({ type: 'areteprofile:member', profile: null });
     return;
   }
 
-  const fullName = profile.fullName || profile.title || '';
+  const payload = await buildPayload(profile);
 
-  setText(IDS.name, fullName);
-  setText(IDS.subtitle, [profile.profession, profile.firm].filter(Boolean).join(' \u00b7 '));
-  setText(IDS.profession, profile.profession);
-  setText(IDS.region, profile.region);
-  setText(IDS.firm, profile.firm);
-  setText(IDS.bio, profile.bio);
-  setText(IDS.areasOfFocus,
-    Array.isArray(profile.areasOfFocus) ? profile.areasOfFocus.join(' · ') : profile.areasOfFocus);
-  setText(IDS.memberSince, formatMonthYear(profile.memberSince));
-
-  // The design falls back to an initials circle when there is no photograph.
-  if (profile.photo) {
-    setImage(IDS.photo, profile.photo);
-    hide(el(IDS.initials));
-  } else {
-    hide(el(IDS.photo));
-    setText(IDS.initials, initialsOf(fullName));
-  }
-
-  setLink(IDS.linkedin, profile.linkedin);
-  setLink(IDS.document, profile.document);
+  // The iframe may come up after this code runs, so answer its ready message
+  // as well as posting once now.
+  embed.onMessage((event) => {
+    const data = (event && event.data) || {};
+    if (data.type === 'areteprofile:ready') embed.postMessage(payload);
+  });
+  embed.postMessage(payload);
 });

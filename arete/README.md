@@ -46,18 +46,25 @@ The one message the parent **sends back**:
 ## The profile page is driven by code, not its dataset
 
 The `Profiles (Item)` page showed the same member — "Eleanor Vane" — for every
-URL. She is not a real member: the section's name, subtitle, Overview
-paragraph, firm, member-since and focus tags were hand-typed design content,
-connected to nothing. Confirmed in the editor, where the item switcher read
-"Alasdair-Davidson 2/183" while the canvas rendered Eleanor Vane.
+URL. She is not a real member, and the profile card is not made of Wix elements
+at all: it is an **HTML embed** (`#html5`) with her details written into the
+markup. An embed cannot be connected to a dataset, so no amount of dataset work
+would ever have changed what it displayed. Confirmed in the editor, where the
+item switcher read "Alasdair-Davidson 2/183" while the canvas rendered Eleanor
+Vane.
 
-So no amount of dataset work would have helped — the elements were never bound.
-The page is populated in code instead:
+The page therefore feeds the embed over `postMessage`, the same pattern the nav
+uses:
 
 - `profiles.web.additions.js` adds `getProfileBySlug()` to
   `backend/profiles.web.js`.
 - `profiles-item.page.js` is the page code: it reads the slug from the address
-  bar and fills the elements in.
+  bar, resolves everything the embed needs (including converting
+  `wix:image://` values into URLs an iframe can load, and the document field
+  into a download URL) and posts `areteprofile:member` into `#html5`.
+- The embed must listen for that message and render it. It should post
+  `areteprofile:ready` when it is listening, since the iframe can come up after
+  the page code has run.
 
 ### The slugs do not match their own URLs
 
