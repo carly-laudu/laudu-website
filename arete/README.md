@@ -43,6 +43,24 @@ The one message the parent **sends back**:
 }
 ```
 
+## Events on a profile
+
+The profile embed already has an Events block, and the page code already fills
+it — nothing is linked by hand. `getMemberEvents()` reads the Wix Events guest
+lists live, so a profile reflects RSVPs without anything being re-saved.
+
+It was keyed on `memberId`, which imported rows do not have, so those members
+showed no events at all. It now takes an email or a member ID, and the page
+passes `profile.email` first.
+
+Guest lists cannot be filtered by email (Wix treats it as PII), so it fetches
+each upcoming event's guests and matches in code. That costs one query per
+event, so the scan is capped at the next `EVENT_SCAN_LIMIT` (25) events and
+stops once five matches are found.
+
+Events therefore depend on `Profiles.email` being populated — the same field
+the approval gate needs.
+
 ## Approval: an account is not a membership
 
 `Permissions.SiteMember` only means "has an account". If site signup is open,

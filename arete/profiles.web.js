@@ -306,17 +306,31 @@ export const updateMyProfile = webMethod(Permissions.SiteMember, async (updates)
   return wixData.update('Profiles', profile, { suppressAuth: true });
 });
 
+// How many upcoming events to scan. Each one costs a guest-list query, so
+// this bounds how long a profile page waits.
+const EVENT_SCAN_LIMIT = 25;
+
 // Upcoming events a member is attending, via Wix Events guest lists.
 // Email can't be used as a query filter (PII), so we fetch upcoming
 // events' guest lists by eventId and match the email in code.
-export const getMemberEvents = webMethod(Permissions.SiteMember, async (memberId) => {
+//
+// Takes a member ID or an email. Imported profiles have no memberId — only an
+// email — and keying on the ID alone is why their events never appeared.
+export const getMemberEvents = webMethod(Permissions.SiteMember, async (memberIdOrEmail) => {
   try {
-    if (!memberId) return [];
+    const given = (memberIdOrEmail || '').toString().trim();
+    if (!given) return [];
 
-    const memRes = await wixData.query('Members/PrivateMembersData')
-      .eq('_id', memberId)
-      .find({ suppressAuth: true });
-    const email = (memRes.items[0]?.loginEmail || '').toLowerCase();
+    let email = '';
+    if (given.indexOf('@') !== -1) {
+      email = normEmail(given);
+    } else {
+      const memRes = await wixData.query('Members/PrivateMembersData')
+        .eq('_id', given)
+        .limit(1)
+        .find({ suppressAuth: true });
+      email = normEmail(memRes.items[0] && memRes.items[0].loginEmail);
+    }
     if (!email) return [];
 
     // Upcoming events
@@ -331,7 +345,8 @@ export const getMemberEvents = webMethod(Permissions.SiteMember, async (memberId
         start: e.start || e.scheduledStartDate || e.startDate || null
       }))
       .filter((e) => e.start && new Date(e.start) >= now)
-      .sort((a, b) => new Date(a.start) - new Date(b.start));
+      .sort((a, b) => new Date(a.start) - new Date(b.start))
+      .slice(0, EVENT_SCAN_LIMIT);
     if (!upcoming.length) return [];
 
     // Guest lists per upcoming event, matched by email in code

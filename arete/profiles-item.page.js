@@ -60,9 +60,12 @@ async function buildProfile(profile) {
     try { documentUrl = await getDocumentUrl(profile.document); } catch (e) { documentUrl = ''; }
   }
 
+  // Email first: imported profiles have no memberId, and keying on that alone
+  // is why their events never showed.
   let events = [];
-  if (profile.memberId) {
-    try { events = (await getMemberEvents(profile.memberId)) || []; } catch (e) { events = []; }
+  const eventKey = profile.email || profile.memberId || '';
+  if (eventKey) {
+    try { events = (await getMemberEvents(eventKey)) || []; } catch (e) { events = []; }
   }
 
   const areasOfFocus = Array.isArray(profile.areasOfFocus)
