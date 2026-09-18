@@ -84,8 +84,8 @@ async function findApplication(email) {
 
 // Reduce a slug or URL segment to comparable form: accents stripped, case
 // folded, every separator removed. Deliberately lossy, because the stored
-// slugs and the URLs Wix generates from them do not agree — "Laura-Ucrós" in
-// the CMS is "-laura-ucrós" in the address bar. Both reduce to "lauraucros".
+// slugs and the URLs Wix generates from them do not agree — "Accented-Name" in
+// the CMS is "-accented-name" in the address bar. Both reduce to "lauraucros".
 function slugKey(value) {
   return (value || '')
     .toString()
@@ -126,8 +126,8 @@ async function uniqueSlug(fullName) {
 
 // Every URL segment a row can be reached at. Wix keeps the live URL in a
 // link-* field, and it can disagree with the slug: profiles created before a
-// member was named keep /profile/new-member-ed4922 while their slug has since
-// become hannah-van-ross-ed4922. The directory links to the link field, so
+// member was named keep /profile/new-member-xxxxxx while their slug has since
+// become member-name-ed4922. The directory links to the link field, so
 // both have to be matchable.
 function linkKeys(item) {
   const keys = [];

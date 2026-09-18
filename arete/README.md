@@ -38,7 +38,7 @@ The one message the parent **sends back**:
 { type: "aretenav:member",
   loggedIn: true,
   name: "Carly",          // greeting only
-  slug: "carly-dunne",    // member.profile.slug — this is what builds the profile link
+  slug: "your-name",    // member.profile.slug — this is what builds the profile link
   profileUrl: ""          // optional; overrides the slug-built URL when set
 }
 ```
@@ -77,7 +77,7 @@ that row is the approval; it happens in the CMS, not by signing up.
 
 - `ensureProfile()` now **claims** a prepared row rather than creating one for
   any account. This also stops imported members getting a duplicate row on
-  first login, which is how Sarah Williams ended up with two.
+  first login, which is how an imported member ended up with two.
 - The one exception is an application whose status is in
   `APPROVED_APPLICATION_STATUSES` — that keeps apply → approve → join working.
   Check the real status values before relying on it; the only one seen so far
@@ -105,9 +105,9 @@ disagree for roughly 58 members. Wix keeps the real URL in `link-profiles-title`
 
 | member | slug | published URL |
 | --- | --- | --- |
-| Hannah Van Ross | `hannah-van-ross-ed4922` | `/profile/new-member-ed4922` |
-| Fiona Brockhurst | `fiona-brockhurst-c38d11` | `/profile/fiona-brockhurst` |
-| Eleanor Morgan | `Eleanor-Morgan` | `/profile/eleanor-morgan` |
+| a member | `member-name-ed4922` | `/profile/new-member-xxxxxx` |
+| a third member | `member-name-c38d11` | `/profile/member-name` |
+| an imported member | `Imported-Member` | `/profile/imported-member` |
 
 The directory embed built its links from the slug:
 
@@ -138,7 +138,7 @@ now runs it at most once per browser session, which stops new duplicates.
 slug: `${fullName.toLowerCase()...}-${member._id.slice(0, 6)}`
 ```
 
-so a profile it creates lands at `/profile/carly-dunne-a839ec`. The six hex
+so a profile it creates lands at `/profile/your-name-a839ec`. The six hex
 characters come from the member ID and exist to guarantee uniqueness, but they
 are only needed when two members genuinely share a name.
 
@@ -192,7 +192,7 @@ corrected:
 
 | fullName | slug | actual URL |
 | --- | --- | --- |
-| Belinda Aspinall | `belinda-aspinall-3ee0cc` | `/profile/new-member-3ee0cc` |
+| another member | `member-name-3ee0cc` | `/profile/new-member-yyyyyy` |
 | Craig Rowlands | `craig-rowlands-59d1ba` | `/profile/new-member-59d1ba` |
 
 The link field is what the directory links to, so the lookup matches on the
@@ -228,7 +228,7 @@ cleared on login and logout.
 No new backend method is needed — `getMyProfile()` already returns the row.
 
 `ensureProfile()` builds the slug as `full-name-<first 6 of member._id>`, e.g.
-`alberto-brazzalotto-b44f3f`, and nothing rewrites it afterwards — so it is
+`member-name-b44f3f`, and nothing rewrites it afterwards — so it is
 stable even when a member edits their name.
 
 If no URL can be resolved (no row yet), the member is sent to `/my-profile`,
