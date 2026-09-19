@@ -382,7 +382,11 @@ export const getMemberEvents = webMethod(Permissions.SiteMember, async (memberId
       .map((e) => ({
         id: e._id,
         title: e.title || '',
-        start: e.start || e.scheduledStartDate || e.startDate || null
+        start: e.start || e.scheduledStartDate || e.startDate || null,
+        // siteEventPageUrl is the live event page, already relative
+        // (/event-details/<slug>). Rebuilding it from the slug is the
+        // fallback, for a row where Wix has not filled the field in.
+        href: e.siteEventPageUrl || (e.slug ? `/event-details/${e.slug}` : '')
       }))
       .filter((e) => e.start && new Date(e.start) >= now)
       .sort((a, b) => new Date(a.start) - new Date(b.start))
@@ -421,7 +425,8 @@ export const getMemberEvents = webMethod(Permissions.SiteMember, async (memberId
 
     return attending.slice(0, 5).map((e) => ({
       title: e.title,
-      date: new Date(e.start).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+      date: new Date(e.start).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+      href: e.href
     }));
   } catch (err) {
     console.log('getMemberEvents failed:', err && err.message);
