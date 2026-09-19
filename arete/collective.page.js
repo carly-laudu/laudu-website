@@ -6,9 +6,6 @@
 // and for ~58 members the two disagree, which is what produces the 404s.
 // getDirectory() returns the real URL, as both `href` and `slug`, so the
 // embed links correctly whether or not its own code is updated.
-//
-// The directory embed is #html5 on this page. The profile card on
-// Profiles (Item) is also #html5 — IDs are per page, so that is not a clash.
 // ============================================================
 
 import { getDirectory } from 'backend/profiles.web';
@@ -21,7 +18,6 @@ $w.onReady(async () => {
   try {
     embed = $w(EMBED_ID);
   } catch (e) {
-    console.log('collective: no embed at', EMBED_ID);
     return;
   }
 
@@ -49,7 +45,6 @@ $w.onReady(async () => {
     console.log('collective: lookup failed', e && e.message);
   }
 
-  console.log('collective: sending', members.length, 'members');
   payload = { type: 'areteportal:data', members };
   send();
 });
