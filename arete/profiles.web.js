@@ -389,20 +389,28 @@ export const getMemberEvents = webMethod(Permissions.SiteMember, async (memberId
       .slice(0, EVENT_SCAN_LIMIT);
     if (!upcoming.length) return [];
 
-    // Guest lists per upcoming event, matched by email in code
+    // Guest lists per upcoming event, matched by email in code.
+    //
+    // GUEST_DETAILS is required: without it the API omits guestDetails
+    // entirely, so every guest's email reads as empty and nothing ever
+    // matches. That is why no member's events appeared.
+    //
+    // attendanceStatus is the real field — there is no rsvpStatus on a guest —
+    // and its values are ATTENDING, NOT_ATTENDING and IN_WAITLIST. Filtering
+    // on it in the query means a declined or waitlisted RSVP is never counted
+    // and less data comes back per event.
     const queryGuestsElevated = elevate(guests.queryGuests);
     const attending = [];
     for (const ev of upcoming) {
       try {
-        const gRes = await queryGuestsElevated()
+        const gRes = await queryGuestsElevated({ fields: ['GUEST_DETAILS'] })
           .eq('eventId', ev.id)
+          .eq('attendanceStatus', 'ATTENDING')
           .limit(1000)
           .find();
         const match = gRes.items.some((g) => {
-          const gEmail = (g.guestDetails?.email || g.email || g.contactDetails?.email || '').toLowerCase();
-          const status = g.rsvpStatus || g.attendanceStatus || '';
-          const positive = !status || status === 'YES' || status === 'ATTENDING';
-          return positive && gEmail === email;
+          const gEmail = normEmail(g.guestDetails && g.guestDetails.email);
+          return gEmail && gEmail === email;
         });
         if (match) attending.push(ev);
       } catch (inner) {
