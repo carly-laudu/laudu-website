@@ -1,7 +1,6 @@
 // ============================================================
 // ARETĒ — site code (masterPage.js)  ·  Wix Velo
 // Nav bridge + first-login profile safety net.
-// TEMP: overlay diagnostic log — remove once dropdowns behave.
 // ============================================================
 
 import { authentication, currentMember } from 'wix-members-frontend';
@@ -104,12 +103,12 @@ $w.onReady(() => {
 
   function setOverlay(on) {
     try {
-      console.log('OVERLAY:', on, 'classList exists:', !!(navExists && nav.customClassList)); // TEMP
       if (!navExists || !nav.customClassList) return;
       if (on) nav.customClassList.add(OPEN_CLASS);
       else    nav.customClassList.remove(OPEN_CLASS);
     } catch (e) {
-      console.log('OVERLAY failed:', e && e.message); // TEMP
+      // customClassList is unavailable on some embed types; the overlay is
+      // cosmetic, so a failure here must not break the nav.
     }
   }
 
