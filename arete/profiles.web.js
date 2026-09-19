@@ -44,6 +44,19 @@ async function loginEmailOf(member) {
   }
 }
 
+// A row that ensureProfile() created as a placeholder on someone's first
+// login: no email, and either no name or the literal 'New Member'. These were
+// written while Profiles.email was still empty, so the member's real imported
+// row could not be found at the time and a blank one was made instead. The
+// same person therefore holds two rows — a stub keyed on their memberId, and
+// their real row keyed on their email — and the stub must never win.
+function isStubRow(row) {
+  if (!row) return false;
+  if (row.email) return false;
+  const name = (row.fullName || row.title || '').trim().toLowerCase();
+  return name === '' || name === 'new member';
+}
+
 // The caller's profile row, by memberId or by email. Null means not approved.
 async function approvedProfile() {
   const member = await currentMember.getMember({ fieldsets: ['FULL'] });
@@ -53,16 +66,21 @@ async function approvedProfile() {
     .eq('memberId', member._id)
     .limit(1)
     .find({ suppressAuth: true });
-  if (claimed.items.length) return claimed.items[0];
+
+  // A real claimed row is authoritative; a stub is not, so fall through to the
+  // email lookup and only use the stub if that finds nothing.
+  if (claimed.items.length && !isStubRow(claimed.items[0])) return claimed.items[0];
 
   const email = await loginEmailOf(member);
-  if (!email) return null;
+  if (email) {
+    const byEmail = await wixData.query('Profiles')
+      .eq('email', email)
+      .limit(1)
+      .find({ suppressAuth: true });
+    if (byEmail.items.length) return byEmail.items[0];
+  }
 
-  const byEmail = await wixData.query('Profiles')
-    .eq('email', email)
-    .limit(1)
-    .find({ suppressAuth: true });
-  return byEmail.items[0] || null;
+  return claimed.items[0] || null;
 }
 
 async function requireApproved() {
@@ -158,15 +176,19 @@ export const ensureProfile = webMethod(Permissions.SiteMember, async () => {
   const member = await currentMember.getMember({ fieldsets: ['FULL'] });
   if (!member || !member._id) return { claimed: false };
 
-  // Already claimed.
+  // Already claimed. A stub does not count as claimed: the member's real row
+  // may since have gained an email, in which case the two need merging.
   const claimed = await wixData.query('Profiles')
     .eq('memberId', member._id)
     .limit(1)
     .find({ suppressAuth: true });
-  if (claimed.items.length) return { claimed: true };
+  const stub = claimed.items.length && isStubRow(claimed.items[0])
+    ? claimed.items[0]
+    : null;
+  if (claimed.items.length && !stub) return { claimed: true };
 
   const email = await loginEmailOf(member);
-  if (!email) return { claimed: false };
+  if (!email) return { claimed: stub ? true : false };
 
   // A row was prepared for this email: attach this member to it.
   const byEmail = await wixData.query('Profiles')
@@ -176,14 +198,28 @@ export const ensureProfile = webMethod(Permissions.SiteMember, async () => {
 
   if (byEmail.items.length) {
     const profile = byEmail.items[0];
+    // Moving the memberId off the stub before deleting it keeps the member
+    // attached to exactly one row at every point, so a login racing this
+    // never finds zero rows.
     profile.memberId = member._id;
     if (!profile.fullName) {
       profile.fullName = [member.contactDetails?.firstName, member.contactDetails?.lastName]
         .filter(Boolean).join(' ') || profile.title || 'Member';
     }
     await wixData.update('Profiles', profile, { suppressAuth: true });
+    if (stub && stub._id !== profile._id) {
+      try {
+        await wixData.remove('Profiles', stub._id, { suppressAuth: true });
+      } catch (e) {
+        console.log('ensureProfile: could not remove stub row', stub._id, e && e.message);
+      }
+    }
     return { claimed: true };
   }
+
+  // A stub and no real row to merge it into: leave it alone rather than
+  // creating a second one.
+  if (stub) return { claimed: true };
 
   // No row, but an approved application — create one.
   const application = await findApplication(email);
@@ -193,8 +229,12 @@ export const ensureProfile = webMethod(Permissions.SiteMember, async () => {
     return { claimed: false };
   }
 
+  // 'New Member' as a last resort produced 22 indistinguishable rows, so fall
+  // back to the email local part instead — it is at least identifiable, and
+  // the member can correct it on the edit page.
   const fullName = application.fullName
     || [member.contactDetails?.firstName, member.contactDetails?.lastName].filter(Boolean).join(' ')
+    || email.split('@')[0]
     || 'New Member';
 
   await wixData.insert('Profiles', {
